@@ -7,12 +7,16 @@ export const adminGuard: CanActivateFn = async () => {
   const router = inject(Router);
 
   const { data } = await authService.getUser();
+  console.log('usuario logueado:', data.user?.id);
+
   if (!data.user) {
     router.navigate(['/auth/login']);
     return false;
   }
 
   const { data: perfil } = await authService.getPerfil(data.user.id);
+  console.log('perfil traido:', perfil);
+
   if (perfil?.rol === 'admin') return true;
 
   router.navigate(['/']);

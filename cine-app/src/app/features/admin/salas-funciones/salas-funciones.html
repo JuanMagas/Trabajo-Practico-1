@@ -1,1 +1,24 @@
-<p>salas-funciones works!</p>
+<section>
+  <h2>Gestión de salas</h2>
+
+  <div class="form-agregar">
+    <input
+      type="number"
+      placeholder="Número de sala"
+      [value]="nuevoNumero()"
+      (input)="actualizarNumero($event)"
+    />
+    <button type="button" (click)="agregarSala()" [disabled]="cargando()">
+      {{ cargando() ? 'Agregando...' : 'Agregar sala' }}
+    </button>
+  </div>
+
+  <p *ngIf="errorMsg()">{{ errorMsg() }}</p>
+
+  <ul>
+    <li *ngFor="let sala of salas()">
+      Sala {{ sala.numero }}
+      <button type="button" (click)="eliminarSala(sala.id)">Eliminar</button>
+    </li>
+  </ul>
+</section>
