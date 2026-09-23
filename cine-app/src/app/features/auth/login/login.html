@@ -1,1 +1,17 @@
-<p>login works!</p>
+<form (submit)="$event.preventDefault()">
+  <label>
+    Email
+    <input type="email" [formField]="loginForm.email" />
+  </label>
+
+  <label>
+    Contraseña
+    <input type="password" [formField]="loginForm.password" />
+  </label>
+
+  <button type="button" (click)="enviar()" [disabled]="cargando()">
+    {{ cargando() ? 'Ingresando...' : 'Ingresar' }}
+  </button>
+
+  <p *ngIf="errorMsg()">{{ errorMsg() }}</p>
+</form>

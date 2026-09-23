@@ -1,1 +1,27 @@
-<p>navbar works!</p>
+<nav>
+  <a routerLink="/" class="logo">CineApp</a>
+
+  <div class="links">
+    <a routerLink="/proximamente">Próximamente</a>
+
+    <ng-container *ngIf="!authService.currentUserId()">
+      <a routerLink="/auth/login">Ingresar</a>
+      <a routerLink="/auth/register">Registrarme</a>
+    </ng-container>
+
+    <ng-container *ngIf="authService.currentUserId()">
+      <a routerLink="/perfil/entradas">Mi perfil</a>
+
+      <a *ngIf="authService.perfil()?.rol === 'empleado' || authService.perfil()?.rol === 'admin'"
+         routerLink="/empleado/validar">
+        Validar QR
+      </a>
+
+      <a *ngIf="authService.perfil()?.rol === 'admin'" routerLink="/admin/dashboard">
+        Admin
+      </a>
+
+      <button (click)="logout()">Salir</button>
+    </ng-container>
+  </div>
+</nav>

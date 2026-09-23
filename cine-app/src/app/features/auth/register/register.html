@@ -1,4 +1,4 @@
-<form (ngSubmit)="enviar()">
+<form (submit)="$event.preventDefault()">
   <label>
     Nombre
     <input type="text" [formField]="registerForm.nombre" />
@@ -48,7 +48,7 @@
     <input type="number" [formField]="registerForm.diasVacaciones" />
   </label>
 
-  <button type="submit" [disabled]="cargando()">
+  <button type="button" (click)="enviar()" [disabled]="cargando()">
     {{ cargando() ? 'Registrando...' : 'Registrarme' }}
   </button>
 

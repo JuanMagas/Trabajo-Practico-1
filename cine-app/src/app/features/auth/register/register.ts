@@ -21,6 +21,7 @@ interface RegisterForm {
   standalone: true,
   imports: [FormField, NgIf],
   templateUrl: './register.html',
+  styleUrl: './register.css',
 })
 export class Register {
   private authService = inject(AuthService);
@@ -51,7 +52,17 @@ export class Register {
   });
 
   async enviar() {
+    console.log('enviar() se ejecutó');
+    console.log('valido?', this.registerForm().valid());
+    console.log('nombre errors:', this.registerForm.nombre().errors());
+    console.log('apellido errors:', this.registerForm.apellido().errors());
+    console.log('email errors:', this.registerForm.email().errors());
+    console.log('password errors:', this.registerForm.password().errors());
+    console.log('fechaNacimiento errors:', this.registerForm.fechaNacimiento().errors());
+
     if (!this.registerForm().valid()) return;
+
+    console.log('pasó la validación, llamando a signUp');
 
     this.cargando.set(true);
     this.errorMsg.set(null);
