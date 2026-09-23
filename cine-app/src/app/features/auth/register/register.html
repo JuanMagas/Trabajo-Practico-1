@@ -1,1 +1,56 @@
-<p>register works!</p>
+<form (ngSubmit)="enviar()">
+  <label>
+    Nombre
+    <input type="text" [formField]="registerForm.nombre" />
+  </label>
+
+  <label>
+    Apellido
+    <input type="text" [formField]="registerForm.apellido" />
+  </label>
+
+  <label>
+    Email
+    <input type="email" [formField]="registerForm.email" />
+  </label>
+
+  <label>
+    Contraseña
+    <input type="password" [formField]="registerForm.password" />
+  </label>
+
+  <label>
+    Fecha de nacimiento
+    <input type="date" [formField]="registerForm.fechaNacimiento" />
+  </label>
+
+  <label>
+    Tipo de sangre
+    <select [formField]="registerForm.tipoSangre">
+      <option value="A+">A+</option>
+      <option value="A-">A-</option>
+      <option value="B+">B+</option>
+      <option value="B-">B-</option>
+      <option value="AB+">AB+</option>
+      <option value="AB-">AB-</option>
+      <option value="O+">O+</option>
+      <option value="O-">O-</option>
+    </select>
+  </label>
+
+  <label>
+    Color de ojos
+    <input type="text" [formField]="registerForm.colorOjos" />
+  </label>
+
+  <label>
+    Días de vacaciones por año
+    <input type="number" [formField]="registerForm.diasVacaciones" />
+  </label>
+
+  <button type="submit" [disabled]="cargando()">
+    {{ cargando() ? 'Registrando...' : 'Registrarme' }}
+  </button>
+
+  <p *ngIf="errorMsg()">{{ errorMsg() }}</p>
+</form>
