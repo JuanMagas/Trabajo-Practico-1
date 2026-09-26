@@ -8,17 +8,81 @@
       [value]="nuevoNumero()"
       (input)="actualizarNumero($event)"
     />
-    <button type="button" (click)="agregarSala()" [disabled]="cargando()">
-      {{ cargando() ? 'Agregando...' : 'Agregar sala' }}
+    <button type="button" (click)="agregarSala()" [disabled]="cargandoSala()">
+      {{ cargandoSala() ? 'Agregando...' : 'Agregar sala' }}
     </button>
   </div>
 
-  <p *ngIf="errorMsg()">{{ errorMsg() }}</p>
+  <p *ngIf="errorSala()">{{ errorSala() }}</p>
 
   <ul>
     <li *ngFor="let sala of salas()">
       Sala {{ sala.numero }}
       <button type="button" (click)="eliminarSala(sala.id)">Eliminar</button>
+    </li>
+  </ul>
+</section>
+
+<section>
+  <h2>Cargar nueva función</h2>
+  <p class="ayuda">La sala se asigna automáticamente según disponibilidad.</p>
+
+  <div class="form-funcion">
+    <label>
+      Película
+      <select [value]="peliculaSeleccionada()" (change)="actualizarPelicula($event)">
+        <option value="">-- Elegí una película --</option>
+        <option *ngFor="let p of peliculas()" [value]="p.id">
+          {{ p.titulo }} ({{ p.duracionMinutos }} min)
+        </option>
+      </select>
+    </label>
+
+    <label>
+      Fecha
+      <input type="date" [value]="fecha()" (input)="actualizarFecha($event)" />
+    </label>
+
+    <label>
+      Hora de inicio
+      <input type="time" [value]="horaInicio()" (input)="actualizarHoraInicio($event)" />
+    </label>
+
+    <label>
+      Formato
+      <select [value]="formato()" (change)="actualizarFormato($event)">
+        <option value="2D">2D</option>
+        <option value="3D">3D</option>
+        <option value="4D">4D</option>
+        <option value="5D">5D</option>
+      </select>
+    </label>
+
+    <label>
+      Idioma
+      <select [value]="idioma()" (change)="actualizarIdioma($event)">
+        <option value="castellano">Castellano</option>
+        <option value="subtitulada">Subtitulada</option>
+      </select>
+    </label>
+
+    <label>
+      Precio
+      <input type="number" [value]="precio()" (input)="actualizarPrecio($event)" />
+    </label>
+
+    <button type="button" (click)="agregarFuncion()" [disabled]="cargandoFuncion()">
+      {{ cargandoFuncion() ? 'Asignando sala...' : 'Crear función' }}
+    </button>
+  </div>
+
+  <p *ngIf="errorFuncion()">{{ errorFuncion() }}</p>
+
+  <h3>Funciones cargadas</h3>
+  <ul>
+    <li *ngFor="let f of funciones()">
+      {{ tituloPelicula(f.peliculaId) }} — Sala {{ numeroSala(f.salaId) }} —
+      {{ f.fecha }} {{ f.horaInicio }}–{{ f.horaFin }} — {{ f.formato }} — {{ f.idioma }} — ${{ f.precio }}
     </li>
   </ul>
 </section>

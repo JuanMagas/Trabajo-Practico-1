@@ -53,3 +53,41 @@ p {
   color: #c0392b;
   font-size: 0.9rem;
 }
+
+.form-funcion {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  margin-bottom: 1rem;
+}
+
+.form-funcion label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.form-funcion input,
+.form-funcion select {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.form-funcion button {
+  padding: 0.6rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  width: fit-content;
+}
+
+.ayuda {
+  font-size: 0.85rem;
+  color: #666;
+  margin-top: -0.5rem;
+}
