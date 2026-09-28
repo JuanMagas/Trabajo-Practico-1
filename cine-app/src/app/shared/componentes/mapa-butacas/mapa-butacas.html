@@ -1,1 +1,34 @@
-<p>mapa-butacas works!</p>
+<div class="mapa">
+  <div class="pantalla">PANTALLA</div>
+
+  <div class="fila" *ngFor="let fila of filas">
+    <span class="etiqueta-fila">{{ fila }}</span>
+
+    <div class="butacas">
+      <ng-container *ngFor="let butaca of butacasDeFila(fila)">
+        <button
+          type="button"
+          class="butaca"
+          [class.ocupada]="estaOcupada(butaca)"
+          [class.seleccionada]="estaSeleccionada(butaca)"
+          [class.vip]="butaca.tipo === 'vip'"
+          [class.accesible]="butaca.tipo === 'accesible'"
+          [disabled]="estaOcupada(butaca)"
+          (click)="toggleButaca(butaca)"
+        >
+          {{ butaca.columna }}
+        </button>
+
+        <span class="pasillo" *ngIf="esPasilloDespues(butaca)"></span>
+      </ng-container>
+    </div>
+  </div>
+
+  <div class="referencias">
+    <span><i class="caja estandar"></i> Estándar</span>
+    <span><i class="caja vip"></i> VIP</span>
+    <span><i class="caja accesible"></i> Accesible</span>
+    <span><i class="caja ocupada"></i> Ocupada</span>
+    <span><i class="caja seleccionada"></i> Seleccionada</span>
+  </div>
+</div>

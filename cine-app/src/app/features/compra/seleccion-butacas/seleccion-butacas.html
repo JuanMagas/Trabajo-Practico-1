@@ -1,1 +1,13 @@
-<p>seleccion-butacas works!</p>
+<h2>Elegí tus butacas</h2>
+
+<app-mapa-butacas
+  [butacasOcupadas]="ocupadas()"
+  [liberarExternamente]="rechazadas()"
+  (seleccionCambio)="onSeleccionCambio($event)"
+/>
+
+<p *ngIf="errorMsg()" class="error">{{ errorMsg() }}</p>
+
+<p *ngIf="seleccion().length > 0 && !errorMsg()">
+  Seleccionaste {{ seleccion().length }} butaca(s). Tenés 10 minutos para completar la compra.
+</p>

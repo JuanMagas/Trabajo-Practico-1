@@ -1,1 +1,17 @@
-<p>listado works!</p>
+<h2>Cartelera</h2>
+
+<div class="pelicula" *ngFor="let p of peliculas()">
+  <h3>{{ p.titulo }}</h3>
+  <p class="duracion">{{ p.duracionMinutos }} min<span *ngIf="p.restriccionEdad"> - +{{ p.restriccionEdad }}</span></p>
+  <p class="sinopsis">{{ p.sinopsis }}</p>
+
+  <div class="funciones">
+    <a *ngFor="let f of funcionesDe(p.id)" [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
+      {{ f.fecha }} {{ f.horaInicio }} - {{ f.formato }} - {{ f.idioma }} - ${{ f.precio }}
+    </a>
+
+    <p *ngIf="funcionesDe(p.id).length === 0" class="sin-funciones">Sin funciones cargadas</p>
+  </div>
+</div>
+
+<p *ngIf="peliculas().length === 0">No hay películas en cartelera todavía.</p>

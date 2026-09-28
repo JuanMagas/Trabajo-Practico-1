@@ -28,7 +28,6 @@ export const routes: Routes = [
 
   {
     path: 'compra/:funcionId',
-    canActivate: [authGuard],
     children: [
       {
         path: 'butacas',
