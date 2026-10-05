@@ -1,0 +1,134 @@
+.peliculas-admin {
+  max-width: 900px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.caja {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+  padding: 1.2rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin-bottom: 2rem;
+}
+
+.caja h3 {
+  margin: 0;
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  font-size: 0.9rem;
+  flex: 1;
+}
+
+.fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.8rem;
+}
+
+input[type='text'],
+input[type='number'],
+input[type='date'],
+select,
+textarea {
+  padding: 0.55rem;
+  font-size: 1rem;
+  font-family: inherit;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+fieldset {
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  padding: 0.8rem;
+}
+
+.generos {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  margin-bottom: 0.8rem;
+}
+
+label.check {
+  flex-direction: row;
+  align-items: center;
+  flex: none;
+  gap: 0.4rem;
+  font-size: 0.95rem;
+  cursor: pointer;
+}
+
+.nuevo-genero {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.nuevo-genero input {
+  flex: 1;
+}
+
+.vacio {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+.acciones {
+  display: flex;
+  gap: 0.6rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+  font-size: 0.95rem;
+}
+
+.acciones-fila {
+  text-align: right;
+}
+
+.error {
+  color: #c0392b;
+  font-weight: 500;
+}
+
+.ok {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.secundario {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

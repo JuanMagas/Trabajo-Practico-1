@@ -1,1 +1,136 @@
-<p>detalle works!</p>
+<section class="detalle">
+  @if (cargando()) {
+    <p>Cargando...</p>
+  }
+
+  @if (!cargando() && !pelicula()) {
+    <p>No encontramos esa película.</p>
+    <a routerLink="/">Volver a la cartelera</a>
+  }
+
+  @if (pelicula(); as p) {
+    <div class="cabecera">
+      @if (p.imagenUrl) {
+        <img class="afiche" [src]="p.imagenUrl" [alt]="'Afiche de ' + p.titulo" />
+      }
+
+      <div class="datos">
+        <h2>{{ p.titulo }}</h2>
+
+        <p class="meta">
+          {{ p.duracionMinutos }} min
+          @if (p.restriccionEdad) {
+            · +{{ p.restriccionEdad }}
+          }
+          @for (g of p.generos; track g.id; let primero = $first) {
+            {{ primero ? '·' : ',' }} {{ g.nombre }}
+          }
+        </p>
+
+        <p class="puntaje">
+          @if (p.promedio !== null) {
+            <span class="estrella">★</span> <strong>{{ p.promedio | number: '1.1-1' }}</strong> / 5
+            <span class="cantidad">({{ p.cantidadResenas }} reseña{{ p.cantidadResenas === 1 ? '' : 's' }})</span>
+          } @else {
+            <span class="cantidad">Todavía sin reseñas</span>
+          }
+        </p>
+
+        @if (p.restriccionEdad) {
+          <p class="aviso">
+            Película con restricción de edad (+{{ p.restriccionEdad }}): debe asistir un adulto.
+          </p>
+        }
+
+        <p class="sinopsis">{{ p.sinopsis }}</p>
+      </div>
+    </div>
+
+    <h3>Funciones</h3>
+    @if (funcionesPorDia().length === 0) {
+      <p class="vacio">No hay funciones próximas cargadas.</p>
+    }
+    @for (dia of funcionesPorDia(); track dia.fecha) {
+      <div class="dia">
+        <h4>{{ etiquetaDia(dia.fecha) }}</h4>
+        <div class="funciones">
+          @for (f of dia.funciones; track f.id) {
+            <a [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
+              <strong>{{ f.horaInicio.slice(0, 5) }}</strong>
+              <span>{{ f.formato }} · {{ f.idioma }} · $ {{ f.precio | number: '1.0-0' }}</span>
+            </a>
+          }
+        </div>
+      </div>
+    }
+
+    <h3>Reseñas</h3>
+
+    @if (auth.currentUserId()) {
+      <form class="mi-resena" (submit)="$event.preventDefault(); guardarResena()">
+        <h4>{{ tieneResena() ? 'Tu reseña' : 'Dejá tu reseña' }}</h4>
+
+        <div class="estrellas-input" role="group" aria-label="Tu calificación">
+          @for (n of opcionesEstrellas; track n) {
+            <button
+              type="button"
+              class="estrella-boton"
+              [class.activa]="n <= miEstrellas()"
+              [attr.aria-label]="n + (n === 1 ? ' estrella' : ' estrellas')"
+              [attr.aria-pressed]="n === miEstrellas()"
+              (click)="miEstrellas.set(n)"
+            >★</button>
+          }
+        </div>
+
+        <textarea
+          rows="3"
+          maxlength="280"
+          placeholder="Comentario corto (opcional)"
+          [value]="miComentario()"
+          (input)="onComentario($event)"
+        ></textarea>
+        <span class="contador">{{ miComentario().length }}/280</span>
+
+        @if (errorResena()) {
+          <p class="error">{{ errorResena() }}</p>
+        }
+        @if (mensajeResena()) {
+          <p class="ok">{{ mensajeResena() }}</p>
+        }
+
+        <div class="acciones">
+          <button type="submit" [disabled]="guardando()">
+            {{ tieneResena() ? 'Actualizar reseña' : 'Publicar reseña' }}
+          </button>
+          @if (tieneResena()) {
+            <button type="button" class="secundario" (click)="eliminarResena()" [disabled]="guardando()">
+              Eliminar mi reseña
+            </button>
+          }
+        </div>
+      </form>
+    } @else {
+      <p class="vacio"><a routerLink="/auth/login">Iniciá sesión</a> para dejar tu reseña.</p>
+    }
+
+    @if (resenas().length === 0) {
+      <p class="vacio">Todavía nadie dejó una reseña.</p>
+    }
+
+    <ul class="resenas">
+      @for (r of resenas(); track $index) {
+        <li>
+          <div class="encabezado">
+            <strong>{{ r.autor }}</strong>
+            <span class="estrella" [attr.aria-label]="r.estrellas + ' de 5 estrellas'">{{ estrellasTexto(r.estrellas) }}</span>
+            <span class="fecha">{{ r.fecha | date: 'dd/MM/yyyy' }}</span>
+          </div>
+          @if (r.comentario) {
+            <p>{{ r.comentario }}</p>
+          }
+        </li>
+      }
+    </ul>
+  }
+</section>

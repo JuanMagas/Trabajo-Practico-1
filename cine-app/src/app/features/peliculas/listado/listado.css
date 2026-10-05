@@ -1,47 +1,163 @@
-h2 {
-  padding: 1rem 1.5rem 0;
+.listado {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}
+
+.filtros {
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  margin-bottom: 1.5rem;
+}
+
+.filtros input[type='search'] {
+  padding: 0.65rem 0.8rem;
+  font-size: 1rem;
+  border: 1px solid #aaa;
+  border-radius: 6px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.chip {
+  padding: 0.35rem 0.8rem;
+  font-size: 0.9rem;
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+  border-radius: 999px;
+  cursor: pointer;
+}
+
+.chip.activo {
+  background: #1a1a1a;
+  color: white;
+}
+
+.limpiar {
+  align-self: flex-start;
+  padding: 0;
+  font-size: 0.9rem;
+  background: none;
+  border: none;
+  color: #555;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.grilla {
+  display: flex;
+  flex-direction: column;
+  gap: 1.2rem;
 }
 
 .pelicula {
-  max-width: 700px;
-  margin: 1rem auto;
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #eee;
+  display: flex;
+  gap: 1.2rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
 }
 
-.duracion {
-  font-size: 0.85rem;
-  color: #666;
+.afiche {
+  width: 150px;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 6px;
+  flex-shrink: 0;
+}
+
+.info {
+  flex: 1;
+  min-width: 0;
+}
+
+.info h3 {
   margin: 0.2rem 0;
 }
 
-.sinopsis {
+.info h3 a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.info h3 a:hover {
+  text-decoration: underline;
+}
+
+.top {
+  display: inline-block;
+  padding: 0.1rem 0.5rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  background: #fff8e1;
+  border: 1px solid #b8860b;
+  color: #7a5a00;
+  border-radius: 3px;
+}
+
+.meta,
+.cantidad,
+.sin-funciones,
+.vacio {
+  color: #666;
   font-size: 0.9rem;
-  color: #444;
-  margin-bottom: 0.8rem;
+}
+
+.puntaje {
+  margin: 0.2rem 0;
+}
+
+.estrella {
+  color: #d4a017;
+}
+
+.sinopsis {
+  margin: 0.5rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .funciones {
   display: flex;
   flex-wrap: wrap;
   gap: 0.5rem;
+  align-items: center;
 }
 
 .funcion-boton {
-  display: inline-block;
-  padding: 0.5rem 0.8rem;
-  background: #1a1a1a;
-  color: white;
+  display: flex;
+  flex-direction: column;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.85rem;
+  color: inherit;
   text-decoration: none;
-  border-radius: 4px;
-  font-size: 0.8rem;
+  border: 1px solid #1a1a1a;
+  border-radius: 6px;
 }
 
 .funcion-boton:hover {
-  background: #333;
+  background: #1a1a1a;
+  color: white;
 }
 
-.sin-funciones {
-  font-size: 0.85rem;
-  color: #999;
+.ver-mas {
+  font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+  .pelicula {
+    flex-direction: column;
+  }
+  .afiche {
+    width: 100%;
+    height: 260px;
+  }
 }

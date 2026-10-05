@@ -1,17 +1,101 @@
-<h2>Cartelera</h2>
+<section class="listado">
+  <h2>Cartelera</h2>
 
-<div class="pelicula" *ngFor="let p of peliculas()">
-  <h3>{{ p.titulo }}</h3>
-  <p class="duracion">{{ p.duracionMinutos }} min<span *ngIf="p.restriccionEdad"> - +{{ p.restriccionEdad }}</span></p>
-  <p class="sinopsis">{{ p.sinopsis }}</p>
+  <div class="filtros">
+    <input
+      type="search"
+      placeholder="Buscar película por título"
+      aria-label="Buscar película por título"
+      [value]="busqueda()"
+      (input)="busqueda.set(valor($event))"
+    />
 
-  <div class="funciones">
-    <a *ngFor="let f of funcionesDe(p.id)" [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
-      {{ f.fecha }} {{ f.horaInicio }} - {{ f.formato }} - {{ f.idioma }} - ${{ f.precio }}
-    </a>
+    @if (generosDisponibles().length > 0) {
+      <div class="chips" role="group" aria-label="Filtrar por género">
+        @for (g of generosDisponibles(); track g.id) {
+          <button
+            type="button"
+            class="chip"
+            [class.activo]="generoSeleccionado() === g.id"
+            [attr.aria-pressed]="generoSeleccionado() === g.id"
+            (click)="elegirGenero(g.id)"
+          >
+            {{ g.nombre }}
+          </button>
+        }
+      </div>
+    }
 
-    <p *ngIf="funcionesDe(p.id).length === 0" class="sin-funciones">Sin funciones cargadas</p>
+    @if (hayFiltros()) {
+      <button type="button" class="limpiar" (click)="limpiarFiltros()">Quitar filtros</button>
+    }
   </div>
-</div>
 
-<p *ngIf="peliculas().length === 0">No hay películas en cartelera todavía.</p>
+  @if (cargando()) {
+    <p>Cargando cartelera...</p>
+  }
+
+  @if (!cargando() && visibles().length === 0) {
+    <p class="vacio">
+      {{ hayFiltros() ? 'Ninguna película coincide con la búsqueda.' : 'No hay películas en cartelera todavía.' }}
+    </p>
+  }
+
+  <div class="grilla">
+    @for (p of visibles(); track p.id) {
+      <article class="pelicula">
+        @if (p.imagenUrl) {
+          <img class="afiche" [src]="p.imagenUrl" [alt]="'Afiche de ' + p.titulo" loading="lazy" />
+        }
+
+        <div class="info">
+          @if (puesto(p.id) > 0) {
+            <span class="top">Más vendida #{{ puesto(p.id) }}</span>
+          }
+
+          <h3><a [routerLink]="['/pelicula', p.id]">{{ p.titulo }}</a></h3>
+
+          <p class="meta">
+            {{ p.duracionMinutos }} min
+            @if (p.restriccionEdad) {
+              · +{{ p.restriccionEdad }}
+            }
+            @for (g of p.generos; track g.id; let primero = $first) {
+              {{ primero ? '·' : ',' }} {{ g.nombre }}
+            }
+          </p>
+
+          <p class="puntaje">
+            @if (p.promedio !== null) {
+              <span class="estrella">★</span> {{ p.promedio | number: '1.1-1' }}
+              <span class="cantidad">({{ p.cantidadResenas }})</span>
+            } @else {
+              <span class="cantidad">Sin reseñas todavía</span>
+            }
+          </p>
+
+          <p class="sinopsis">{{ p.sinopsis }}</p>
+
+          <div class="funciones">
+            @for (f of proximas(p.id).slice(0, maxFunciones); track f.id) {
+              <a [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
+                <strong>{{ etiquetaDiaCorto(f.fecha) }} {{ f.horaInicio.slice(0, 5) }}</strong>
+                <span>{{ f.formato }} · {{ f.idioma }} · $ {{ f.precio | number: '1.0-0' }}</span>
+              </a>
+            }
+
+            @if (proximas(p.id).length > maxFunciones) {
+              <a [routerLink]="['/pelicula', p.id]" class="ver-mas">
+                Ver las {{ proximas(p.id).length }} funciones
+              </a>
+            }
+
+            @if (proximas(p.id).length === 0) {
+              <p class="sin-funciones">Sin funciones próximas</p>
+            }
+          </div>
+        </div>
+      </article>
+    }
+  </div>
+</section>

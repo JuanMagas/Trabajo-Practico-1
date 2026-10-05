@@ -1,1 +1,139 @@
-<p>peliculas-admin works!</p>
+<section class="peliculas-admin">
+  <h2>Películas</h2>
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+  @if (mensaje()) {
+    <p class="ok">{{ mensaje() }}</p>
+  }
+
+  <form class="caja" (submit)="$event.preventDefault(); guardar()">
+    <h3>{{ tituloFormulario() }}</h3>
+
+    <label>
+      Título
+      <input type="text" [value]="titulo()" (input)="titulo.set(valor($event))" />
+    </label>
+
+    <label>
+      Sinopsis
+      <textarea rows="4" [value]="sinopsis()" (input)="sinopsis.set(valor($event))"></textarea>
+    </label>
+
+    <label>
+      URL de la imagen (opcional)
+      <input type="text" [value]="imagenUrl()" (input)="imagenUrl.set(valor($event))" />
+    </label>
+
+    <div class="fila">
+      <label>
+        Duración (min)
+        <input type="number" min="1" [value]="duracion()" (input)="duracion.set(valor($event))" />
+      </label>
+
+      <label>
+        Restricción de edad
+        <select [value]="restriccion()" (change)="restriccion.set(valor($event))">
+          <option value="" [selected]="restriccion() === ''">Sin restricción</option>
+          <option value="13" [selected]="restriccion() === '13'">+13</option>
+          <option value="18" [selected]="restriccion() === '18'">+18</option>
+        </select>
+      </label>
+
+      <label>
+        Estado
+        <select [value]="estado()" (change)="estado.set(valor($event))">
+          <option value="proximamente" [selected]="estado() === 'proximamente'">Próximamente</option>
+          <option value="cartelera" [selected]="estado() === 'cartelera'">En cartelera</option>
+          <option value="archivada" [selected]="estado() === 'archivada'">Archivada</option>
+        </select>
+      </label>
+
+      <label>
+        Fecha de estreno
+        <input type="date" [value]="fechaEstreno()" (input)="fechaEstreno.set(valor($event))" />
+      </label>
+    </div>
+
+    <fieldset>
+      <legend>Géneros</legend>
+      @if (generos().length === 0) {
+        <p class="vacio">Todavía no hay géneros. Creá el primero abajo.</p>
+      }
+      <div class="generos">
+        @for (g of generos(); track g.id) {
+          <label class="check">
+            <input
+              type="checkbox"
+              [checked]="generoIds().includes(g.id)"
+              (change)="alternarGenero(g.id)"
+            />
+            {{ g.nombre }}
+          </label>
+        }
+      </div>
+
+      <div class="nuevo-genero">
+        <input
+          type="text"
+          placeholder="Nuevo género"
+          [value]="nuevoGenero()"
+          (input)="nuevoGenero.set(valor($event))"
+          (keydown.enter)="$event.preventDefault(); crearGenero()"
+        />
+        <button type="button" class="secundario" (click)="crearGenero()">Agregar género</button>
+      </div>
+    </fieldset>
+
+    <div class="acciones">
+      <button type="submit" [disabled]="guardando()">
+        {{ guardando() ? 'Guardando...' : editandoId() ? 'Guardar cambios' : 'Crear película' }}
+      </button>
+      @if (editandoId()) {
+        <button type="button" class="secundario" (click)="limpiarFormulario()">Cancelar edición</button>
+      }
+    </div>
+  </form>
+
+  @if (cargando()) {
+    <p>Cargando...</p>
+  }
+
+  @if (!cargando() && peliculas().length === 0) {
+    <p>Todavía no hay películas cargadas.</p>
+  }
+
+  @if (peliculas().length > 0) {
+    <table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Estado</th>
+          <th>Duración</th>
+          <th>Edad</th>
+          <th>Géneros</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (p of peliculas(); track p.id) {
+          <tr>
+            <td>{{ p.titulo }}</td>
+            <td>{{ p.estado === 'cartelera' ? 'En cartelera' : p.estado === 'archivada' ? 'Archivada' : 'Próximamente' }}</td>
+            <td>{{ p.duracionMinutos }} min</td>
+            <td>{{ p.restriccionEdad ? '+' + p.restriccionEdad : '-' }}</td>
+            <td>
+              @for (g of p.generos; track g.id; let ultimo = $last) {
+                {{ g.nombre }}@if (!ultimo) {, }
+              }
+            </td>
+            <td class="acciones-fila">
+              <button type="button" class="secundario" (click)="editar(p)">Editar</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</section>
