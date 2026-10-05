@@ -11,3 +11,9 @@
 <p *ngIf="seleccion().length > 0 && !errorMsg()">
   Seleccionaste {{ seleccion().length }} butaca(s). Tenés 10 minutos para completar la compra.
 </p>
+
+<div class="acciones">
+  <button type="button" (click)="continuar()" [disabled]="seleccion().length === 0 || pendientes() > 0">
+    Continuar
+  </button>
+</div>

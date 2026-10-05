@@ -1,1 +1,58 @@
-<p>candy-bar works!</p>
+<section class="candy">
+  <h2>Candy bar</h2>
+  <p class="ayuda">
+    Sumá pochoclos y bebidas a tu compra. Los retirás con el mismo QR de tu entrada. Es opcional.
+  </p>
+
+  @if (cargando()) {
+    <p>Cargando productos...</p>
+  }
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+
+  @if (!cargando() && !errorMsg() && categorias().length === 0) {
+    <p>Por ahora no hay productos disponibles.</p>
+  }
+
+  @for (cat of categorias(); track cat.id) {
+    <h3>{{ cat.nombre }}</h3>
+    <ul class="productos">
+      @for (p of cat.productos; track p.id) {
+        <li>
+          <span class="nombre">{{ p.nombre }}</span>
+          <span class="precio">$ {{ p.precio | number: '1.2-2' }}</span>
+          <span class="cantidad">
+            <button
+              type="button"
+              class="paso"
+              aria-label="Quitar uno"
+              (click)="restar(p.id)"
+              [disabled]="cantidad(p.id) === 0"
+            >−</button>
+            <span class="num">{{ cantidad(p.id) }}</span>
+            <button
+              type="button"
+              class="paso"
+              aria-label="Agregar uno"
+              (click)="sumar(p.id)"
+              [disabled]="cantidad(p.id) >= maximo"
+            >+</button>
+          </span>
+        </li>
+      }
+    </ul>
+  }
+
+  @if (cantidadTotal() > 0) {
+    <p class="subtotal">Productos elegidos: $ {{ totalReferencia() | number: '1.2-2' }}</p>
+  }
+
+  <div class="acciones">
+    <button type="button" class="secundario" (click)="volver()">Volver a las butacas</button>
+    <button type="button" (click)="continuar()">
+      {{ cantidadTotal() > 0 ? 'Continuar al pago' : 'Seguir sin productos' }}
+    </button>
+  </div>
+</section>

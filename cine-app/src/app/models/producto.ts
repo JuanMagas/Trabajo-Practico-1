@@ -4,3 +4,8 @@ export interface Producto {
   nombre: string;
   precio: number;
 }
+
+export interface ItemPedido {
+  productoId: string;
+  cantidad: number;
+}

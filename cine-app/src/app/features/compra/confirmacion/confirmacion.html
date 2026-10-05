@@ -1,1 +1,70 @@
-<p>confirmacion works!</p>
+<section class="confirmacion">
+  @if (cargando()) {
+    <p>Cargando tu compra...</p>
+  }
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+    <a routerLink="/">Volver a la cartelera</a>
+  }
+
+  @if (compra(); as c) {
+    <h2>¡Compra confirmada!</h2>
+
+    <div class="ticket">
+      <h3>{{ c.pelicula }}</h3>
+      <p>{{ c.fechaFuncion }} · {{ c.horaInicio }} · Sala {{ c.sala }}</p>
+      <p>{{ c.formato }} · {{ c.idioma }}</p>
+
+      @if (c.requiereAdulto) {
+        <p class="aviso">Película con restricción de edad (+{{ c.restriccionEdad }}): debe asistir un adulto.</p>
+      }
+
+      <ul>
+        @for (e of c.entradas; track e.fila + e.columna) {
+          <li>
+            Butaca {{ e.fila }}{{ e.columna }}
+            @if (e.tipo === 'vip') {
+              <strong class="etiqueta vip">VIP</strong>
+            }
+            @if (e.tipo === 'accesible') {
+              <strong class="etiqueta accesible">Accesible</strong>
+            }
+          </li>
+        }
+      </ul>
+
+      @if (c.productos.length > 0) {
+        <h4>Candy bar</h4>
+        <ul>
+          @for (p of c.productos; track $index) {
+            <li>{{ p.cantidad }} × {{ p.nombre }}</li>
+          }
+        </ul>
+        @if (c.candyEntregado) {
+          <p class="aviso">Los productos del candy bar ya fueron retirados.</p>
+        }
+      }
+
+      <p class="total">Total: $ {{ c.total | number: '1.2-2' }}</p>
+
+      @if (qrDataUrl(); as qr) {
+        <img class="qr" [src]="qr" alt="Código QR de tu compra" />
+      }
+      <p class="codigo">{{ c.codigoQr }}</p>
+    </div>
+
+    <p class="nota">
+      Guardá este comprobante: si no tenés cuenta, esta página y el PDF son la única forma de recuperar tu entrada.
+      La entrada y los productos del candy bar se validan por separado en cada mostrador, y cada uno
+      deja de funcionar una vez usado.
+    </p>
+
+    <div class="acciones">
+      <button type="button" (click)="descargarPdf()" [disabled]="generandoPdf()">
+        {{ generandoPdf() ? 'Generando PDF...' : 'Descargar PDF' }}
+      </button>
+      <a routerLink="/">Volver a la cartelera</a>
+    </div>
+  }
+</section>

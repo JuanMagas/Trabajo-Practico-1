@@ -42,3 +42,53 @@ p {
   color: #c0392b;
   font-size: 0.9rem;
 }
+
+.campo-password {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.campo-password input {
+  flex: 1;
+}
+
+button.ojo {
+  background: transparent;
+  color: inherit;
+  border: 1px solid #ccc;
+  padding: 0 0.6rem;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 0.8rem;
+}
+
+.campo-password {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.campo-password input {
+  flex: 1;
+}
+
+button.ojo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: #555;
+  border: 1px solid #ccc;
+  padding: 0 0.6rem;
+}
+
+button.ojo:hover {
+  color: #1a1a1a;
+  border-color: #999;
+}
+
+.error {
+  color: #c0392b;
+  font-size: 0.8rem;
+}

@@ -1,1 +1,53 @@
-<p>validar-qr works!</p>
+<section class="validar">
+  <h2>Validar entrada y candy</h2>
+  <p class="ayuda">
+    Escaneá el QR con el lector o escribí el código a mano. Enter valida la entrada;
+    el otro botón entrega los productos del candy bar.
+  </p>
+
+  <form (submit)="$event.preventDefault(); validarEntrada()">
+    <input
+      #campo
+      type="text"
+      autocomplete="off"
+      autofocus
+      placeholder="Código de la compra"
+      [value]="codigo()"
+      (input)="onCodigo($event)"
+    />
+    <button type="submit" [disabled]="!puedeActuar()">
+      {{ procesando() ? 'Procesando...' : 'Validar entrada' }}
+    </button>
+    <button type="button" class="secundario" (click)="entregarCandy()" [disabled]="!puedeActuar()">
+      Entregar candy
+    </button>
+  </form>
+
+  @if (errorMsg()) {
+    <div class="resultado rechazada">
+      <strong>✗ NO VÁLIDO</strong>
+      <p>{{ errorMsg() }}</p>
+    </div>
+  }
+
+  @if (resultado(); as r) {
+    <div class="resultado aceptada">
+      <strong>✓ ENTRADA VÁLIDA</strong>
+      <h3>{{ r.pelicula }}</h3>
+      <p>{{ r.fechaFuncion }} · {{ r.horaInicio }} · {{ r.formato }} · {{ r.idioma }}</p>
+      <p>Sala {{ r.sala }}</p>
+      <p>{{ r.cantidad }} entrada(s): {{ r.butacas }}</p>
+    </div>
+  }
+
+  @if (entrega(); as productos) {
+    <div class="resultado aceptada">
+      <strong>✓ ENTREGAR AL CLIENTE</strong>
+      <ul>
+        @for (p of productos; track $index) {
+          <li>{{ p.cantidad }} × {{ p.nombre }}</li>
+        }
+      </ul>
+    </div>
+  }
+</section>

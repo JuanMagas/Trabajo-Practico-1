@@ -1,1 +1,84 @@
-<p>checkout works!</p>
+<section class="checkout">
+  <h2>Resumen de tu compra</h2>
+
+  @if (cargando()) {
+    <p class="info">Calculando tu compra...</p>
+  }
+
+  @if (resumen(); as r) {
+    <h3>{{ r.pelicula }}</h3>
+    <p class="funcion">{{ r.fechaFuncion }} · {{ r.horaInicio }} · {{ r.formato }} · {{ r.idioma }}</p>
+
+    @if (r.requiereAdulto) {
+      <div class="aviso aviso-edad">
+        <p>
+          <strong>Atención:</strong> esta película tiene restricción de edad (+{{ r.restriccionEdad }}).
+          Las entradas deben ir acompañadas por un adulto.
+        </p>
+        <label class="confirmar-edad">
+          <input type="checkbox" [checked]="advertenciaAceptada()" (change)="onAdvertencia($event)" />
+          Entiendo la restricción
+        </label>
+      </div>
+    }
+
+    <ul class="items">
+      @for (i of r.items; track i.fila + i.columna) {
+        <li>
+          <span>
+            Butaca {{ i.fila }}{{ i.columna }}
+            @if (i.tipo === 'vip') {
+              <strong class="etiqueta vip">VIP</strong>
+            }
+            @if (i.tipo === 'accesible') {
+              <strong class="etiqueta accesible">Accesible</strong>
+            }
+          </span>
+          <span>$ {{ i.precioFinal | number: '1.2-2' }}</span>
+        </li>
+      }
+    </ul>
+
+    @if (hayVip()) {
+      <p class="aviso vip-aviso">
+        Tu compra incluye butacas VIP (última fila de la sala), que tienen un precio mayor al de una butaca estándar.
+      </p>
+    }
+
+    @if (r.productos.length > 0) {
+      <h4>Candy bar</h4>
+      <ul class="items">
+        @for (p of r.productos; track p.productoId) {
+          <li>
+            <span>{{ p.cantidad }} × {{ p.nombre }}</span>
+            <span>$ {{ p.subtotal | number: '1.2-2' }}</span>
+          </li>
+        }
+      </ul>
+      <p class="nota">Se retiran en el candy bar presentando el mismo QR de tu entrada.</p>
+    }
+
+    <div class="totales">
+      @if (r.descuentoPorcentaje > 0) {
+        <p>Subtotal: $ {{ r.subtotal | number: '1.2-2' }}</p>
+        <p class="descuento">Descuento en entradas ({{ r.descuentoPorcentaje }}%): - $ {{ r.subtotal - r.total | number: '1.2-2' }}</p>
+      }
+      <p class="total">Total: $ {{ r.total | number: '1.2-2' }}</p>
+    </div>
+
+    <p class="nota">Pago simulado: no se cobra dinero real.</p>
+  }
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+
+  <div class="acciones">
+    <button type="button" class="secundario" (click)="volver()" [disabled]="procesando()">Volver al candy bar</button>
+    @if (resumen()) {
+      <button type="button" (click)="pagar()" [disabled]="!puedePagar()">
+        {{ procesando() ? 'Procesando...' : 'Pagar' }}
+      </button>
+    }
+  </div>
+</section>

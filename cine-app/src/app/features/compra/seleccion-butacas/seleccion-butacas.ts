@@ -1,6 +1,6 @@
 import { Component, OnInit, OnDestroy, signal, inject, HostListener } from '@angular/core';
 import { NgIf } from '@angular/common';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MapaButacas } from '../../../shared/componentes/mapa-butacas/mapa-butacas';
 import { ButacasService, ButacaOcupada } from '../butacas-service';
 import { obtenerSesionCompraId } from '../../../shared/utils/sesion';
@@ -15,12 +15,19 @@ import { Butaca } from '../../../models/butaca';
 })
 export class SeleccionButacas implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
+  private router = inject(Router);
   private butacasService = inject(ButacasService);
 
   private funcionId = this.route.snapshot.paramMap.get('funcionId')!;
   private sesionId = obtenerSesionCompraId();
   private desuscribir: (() => void) | null = null;
   private seleccionPrevia: Butaca[] = [];
+
+  // true cuando el usuario avanza al checkout: las reservas NO se liberan, el checkout las necesita
+  private continuando = false;
+
+  // cantidad de reservas/liberaciones en curso contra el servidor
+  pendientes = signal(0);
 
   ocupadas = signal<ButacaOcupada[]>([]);
   rechazadas = signal<ButacaOcupada[]>([]);
@@ -34,7 +41,15 @@ export class SeleccionButacas implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     this.desuscribir?.();
-    this.butacasService.liberarTodasDeSesion(this.funcionId, this.sesionId);
+    if (!this.continuando) {
+      this.butacasService.liberarTodasDeSesion(this.funcionId, this.sesionId);
+    }
+  }
+
+  continuar() {
+    if (this.seleccion().length === 0 || this.pendientes() > 0) return;
+    this.continuando = true;
+    this.router.navigate(['/compra', this.funcionId, 'candy']);
   }
 
   @HostListener('window:beforeunload')
@@ -48,7 +63,18 @@ export class SeleccionButacas implements OnInit, OnDestroy {
   this.ocupadas.set(data);
 }
 
+  // Se cuenta cuántas operaciones hay en vuelo para no dejar avanzar al checkout
+  // mientras alguna reserva todavía se está guardando en el servidor.
   async onSeleccionCambio(nuevaSeleccion: Butaca[]) {
+    this.pendientes.update((n) => n + 1);
+    try {
+      await this.procesarCambio(nuevaSeleccion);
+    } finally {
+      this.pendientes.update((n) => n - 1);
+    }
+  }
+
+  private async procesarCambio(nuevaSeleccion: Butaca[]) {
     this.errorMsg.set(null);
 
     const clave = (b: { fila: string; columna: number }) => `${b.fila}-${b.columna}`;

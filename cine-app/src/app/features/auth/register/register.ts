@@ -1,4 +1,4 @@
-import { Component, signal, inject } from '@angular/core';
+import { Component, signal, inject, computed } from '@angular/core';
 import { NgIf } from '@angular/common';
 import { Router } from '@angular/router';
 import { form, FormField, required, email as emailValidator, minLength } from '@angular/forms/signals';
@@ -10,6 +10,7 @@ interface RegisterForm {
   apellido: string;
   email: string;
   password: string;
+  confirmarPassword: string;
   fechaNacimiento: string;
   tipoSangre: TipoSangre;
   colorOjos: string;
@@ -29,12 +30,14 @@ export class Register {
 
   cargando = signal(false);
   errorMsg = signal<string | null>(null);
+  mostrarPassword = signal(false);
 
   model = signal<RegisterForm>({
     nombre: '',
     apellido: '',
     email: '',
     password: '',
+    confirmarPassword: '',
     fechaNacimiento: '',
     tipoSangre: 'O+',
     colorOjos: '',
@@ -48,26 +51,34 @@ export class Register {
     emailValidator(path.email, { message: 'Ingresá un email válido' });
     required(path.password, { message: 'La contraseña es obligatoria' });
     minLength(path.password, 6, { message: 'Mínimo 6 caracteres' });
+    required(path.confirmarPassword, { message: 'Confirmá la contraseña' });
     required(path.fechaNacimiento, { message: 'La fecha de nacimiento es obligatoria' });
   });
 
-  async enviar() {
-    console.log('enviar() se ejecutó');
-    console.log('valido?', this.registerForm().valid());
-    console.log('nombre errors:', this.registerForm.nombre().errors());
-    console.log('apellido errors:', this.registerForm.apellido().errors());
-    console.log('email errors:', this.registerForm.email().errors());
-    console.log('password errors:', this.registerForm.password().errors());
-    console.log('fechaNacimiento errors:', this.registerForm.fechaNacimiento().errors());
+  passwordsNoCoinciden = computed(
+    () =>
+      this.model().confirmarPassword !== '' &&
+      this.model().password !== this.model().confirmarPassword
+  );
 
+  togglePassword() {
+    this.mostrarPassword.update((v) => !v);
+  }
+
+  async enviar() {
+    if (this.cargando()) return;
+    if (!this.registerForm().valid()) return;
     if (!this.registerForm().valid()) return;
 
-    console.log('pasó la validación, llamando a signUp');
+    if (this.passwordsNoCoinciden()) {
+      this.errorMsg.set('Las contraseñas no coinciden');
+      return;
+    }
 
     this.cargando.set(true);
     this.errorMsg.set(null);
 
-    const { email, password, ...datosPerfil } = this.model();
+    const { email, password, confirmarPassword, ...datosPerfil } = this.model();
     const { error } = await this.authService.signUp(email, password, datosPerfil);
 
     this.cargando.set(false);

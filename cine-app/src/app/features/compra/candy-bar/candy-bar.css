@@ -1,0 +1,87 @@
+.candy {
+  max-width: 560px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.ayuda {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+.productos {
+  list-style: none;
+  padding: 0;
+  margin: 0.5rem 0 1.2rem;
+}
+
+.productos li {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #eee;
+}
+
+.nombre {
+  flex: 1;
+}
+
+.precio {
+  color: #444;
+}
+
+.cantidad {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.num {
+  min-width: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+.subtotal {
+  text-align: right;
+  font-weight: 600;
+}
+
+.error {
+  color: #c0392b;
+  font-weight: 500;
+}
+
+.acciones {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.8rem;
+  margin-top: 1.5rem;
+}
+
+button {
+  padding: 0.75rem 1.2rem;
+  font-size: 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.paso {
+  padding: 0.2rem 0.7rem;
+  font-size: 1.1rem;
+}
+
+button.secundario {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+button:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}

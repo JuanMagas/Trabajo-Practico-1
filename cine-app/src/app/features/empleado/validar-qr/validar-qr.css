@@ -1,0 +1,75 @@
+.validar {
+  max-width: 520px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.ayuda {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+button.secundario {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+.resultado ul {
+  margin: 0.5rem 0 0;
+  padding-left: 1.2rem;
+}
+
+input {
+  flex: 1;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-family: monospace;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+button {
+  padding: 0.75rem 1.2rem;
+  font-size: 1rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.resultado {
+  padding: 1rem 1.2rem;
+  border-radius: 6px;
+  border-left: 6px solid;
+}
+
+.resultado p,
+.resultado h3 {
+  margin: 0.3rem 0;
+}
+
+.aceptada {
+  background: #e8f5e9;
+  border-left-color: #2e7d32;
+  color: #1b5e20;
+}
+
+.rechazada {
+  background: #fdecea;
+  border-left-color: #c0392b;
+  color: #8e2a1f;
+}
