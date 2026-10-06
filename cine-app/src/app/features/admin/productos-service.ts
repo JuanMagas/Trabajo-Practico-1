@@ -8,11 +8,27 @@ export interface CategoriaConProductos {
   productos: Producto[];
 }
 
+export interface DatosProducto {
+  categoriaId: string;
+  nombre: string;
+  precio: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ProductosService {
   private supabase = inject(SupabaseClientService).client;
 
-  // Una sola consulta: categorías con sus productos activos adentro.
+  private mapProducto(p: any): Producto {
+    return {
+      id: p.id,
+      categoriaId: p.categoria_id,
+      nombre: p.nombre,
+      precio: Number(p.precio),
+      activo: p.activo,
+    };
+  }
+
+  // ---------- Público (candy bar): categorías con sus productos activos ----------
   async obtenerCatalogo(): Promise<{ categorias: CategoriaConProductos[]; error: string | null }> {
     const { data, error } = await this.supabase
       .from('categorias_productos')
@@ -27,16 +43,75 @@ export class ProductosService {
         id: c.id,
         nombre: c.nombre,
         productos: (c.productos ?? [])
-          .map((p: any): Producto => ({
-            id: p.id,
-            categoriaId: p.categoria_id,
-            nombre: p.nombre,
-            precio: Number(p.precio),
-          }))
+          .map((p: any) => this.mapProducto(p))
           .sort((a: Producto, b: Producto) => a.nombre.localeCompare(b.nombre)),
       }))
       .filter((c: CategoriaConProductos) => c.productos.length > 0); // no mostrar categorías vacías
 
     return { categorias, error: null };
+  }
+
+  // ---------- Admin ----------
+  // Todas las categorías (también las vacías) con todos sus productos (también los dados de baja).
+  async obtenerTodoAdmin(): Promise<{ categorias: CategoriaConProductos[]; error: string | null }> {
+    const { data, error } = await this.supabase
+      .from('categorias_productos')
+      .select('id, nombre, productos(id, categoria_id, nombre, precio, activo)')
+      .order('nombre');
+
+    if (error) return { categorias: [], error: error.message };
+
+    const categorias = (data ?? []).map((c: any) => ({
+      id: c.id,
+      nombre: c.nombre,
+      productos: (c.productos ?? [])
+        .map((p: any) => this.mapProducto(p))
+        .sort((a: Producto, b: Producto) => a.nombre.localeCompare(b.nombre)),
+    }));
+
+    return { categorias, error: null };
+  }
+
+  async crearCategoria(nombre: string): Promise<{ error: string | null }> {
+    const { error } = await this.supabase.from('categorias_productos').insert({ nombre });
+    return { error: error?.message ?? null };
+  }
+
+  async crearProducto(datos: DatosProducto): Promise<{ error: string | null }> {
+    const { error } = await this.supabase.from('productos').insert({
+      categoria_id: datos.categoriaId,
+      nombre: datos.nombre,
+      precio: datos.precio,
+    });
+    return { error: error?.message ?? null };
+  }
+
+  async actualizarProducto(id: string, datos: DatosProducto): Promise<{ error: string | null }> {
+    const { data, error } = await this.supabase
+      .from('productos')
+      .update({ categoria_id: datos.categoriaId, nombre: datos.nombre, precio: datos.precio })
+      .eq('id', id)
+      .select('id');
+
+    return { error: this.resultadoEscritura(error?.message, data) };
+  }
+
+  // Baja lógica: el producto deja de verse en el candy bar, pero las compras viejas lo siguen referenciando.
+  async cambiarActivo(id: string, activo: boolean): Promise<{ error: string | null }> {
+    const { data, error } = await this.supabase
+      .from('productos')
+      .update({ activo })
+      .eq('id', id)
+      .select('id');
+
+    return { error: this.resultadoEscritura(error?.message, data) };
+  }
+
+  // Cuando RLS deniega un update no hay error: simplemente se afectan 0 filas.
+  // Se detecta pidiendo las filas afectadas.
+  private resultadoEscritura(mensaje: string | undefined, filas: unknown[] | null): string | null {
+    if (mensaje) return mensaje;
+    if (!filas || filas.length === 0) return 'No se pudo guardar: sin permisos o el producto ya no existe';
+    return null;
   }
 }

@@ -1,0 +1,110 @@
+.productos-admin {
+  max-width: 820px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+}
+
+.formularios {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.caja {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.caja h3 {
+  margin: 0;
+}
+
+input,
+select {
+  padding: 0.55rem;
+  font-size: 1rem;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+}
+
+.categoria {
+  margin: 1.5rem 0 0.4rem;
+}
+
+.vacio {
+  color: #777;
+  font-size: 0.9rem;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th,
+td {
+  padding: 0.55rem 0.4rem;
+  border-bottom: 1px solid #eee;
+  text-align: left;
+}
+
+.num {
+  text-align: right;
+  white-space: nowrap;
+}
+
+td.acciones {
+  display: flex;
+  gap: 0.4rem;
+  justify-content: flex-end;
+}
+
+tr.inactivo td {
+  color: #999;
+}
+
+tr.editando td {
+  background: #fafafa;
+}
+
+tr.editando td:first-child {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.error {
+  color: #c0392b;
+  font-weight: 500;
+}
+
+.ok {
+  color: #2e7d32;
+  font-weight: 500;
+}
+
+button {
+  padding: 0.55rem 0.9rem;
+  font-size: 0.95rem;
+  background: #1a1a1a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+button.secundario {
+  background: transparent;
+  color: #1a1a1a;
+  border: 1px solid #1a1a1a;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

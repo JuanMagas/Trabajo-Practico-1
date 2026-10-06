@@ -1,1 +1,114 @@
-<p>productos-admin works!</p>
+<section class="productos-admin">
+  <h2>Productos del candy bar</h2>
+
+  @if (errorMsg()) {
+    <p class="error">{{ errorMsg() }}</p>
+  }
+  @if (mensaje()) {
+    <p class="ok">{{ mensaje() }}</p>
+  }
+
+  <div class="formularios">
+    <form class="caja" (submit)="$event.preventDefault(); crearCategoria()">
+      <h3>Nueva categoría</h3>
+      <input
+        type="text"
+        placeholder="Ej: Pochoclos"
+        [value]="nuevaCategoria()"
+        (input)="nuevaCategoria.set(valor($event))"
+      />
+      <button type="submit" [disabled]="guardando()">Crear categoría</button>
+    </form>
+
+    <form class="caja" (submit)="$event.preventDefault(); crearProducto()">
+      <h3>Nuevo producto</h3>
+      <select [value]="prodCategoriaId()" (change)="prodCategoriaId.set(valor($event))">
+        @for (c of categorias(); track c.id) {
+          <option [value]="c.id" [selected]="c.id === prodCategoriaId()">{{ c.nombre }}</option>
+        }
+      </select>
+      <input
+        type="text"
+        placeholder="Nombre"
+        [value]="prodNombre()"
+        (input)="prodNombre.set(valor($event))"
+      />
+      <input
+        type="text"
+        inputmode="decimal"
+        placeholder="Precio"
+        [value]="prodPrecio()"
+        (input)="prodPrecio.set(valor($event))"
+      />
+      <button type="submit" [disabled]="guardando()">Crear producto</button>
+    </form>
+  </div>
+
+  @if (cargando()) {
+    <p>Cargando...</p>
+  }
+
+  @if (!cargando() && categorias().length === 0) {
+    <p>Todavía no hay categorías. Creá la primera para empezar a cargar productos.</p>
+  }
+
+  @for (c of categorias(); track c.id) {
+    <h3 class="categoria">{{ c.nombre }}</h3>
+
+    @if (c.productos.length === 0) {
+      <p class="vacio">Sin productos en esta categoría.</p>
+    } @else {
+      <table>
+        <thead>
+          <tr>
+            <th>Producto</th>
+            <th class="num">Precio</th>
+            <th>Estado</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (p of c.productos; track p.id) {
+            @if (editandoId() === p.id) {
+              <tr class="editando">
+                <td>
+                  <input type="text" [value]="editNombre()" (input)="editNombre.set(valor($event))" />
+                  <select [value]="editCategoriaId()" (change)="editCategoriaId.set(valor($event))">
+                    @for (cat of categorias(); track cat.id) {
+                      <option [value]="cat.id" [selected]="cat.id === editCategoriaId()">{{ cat.nombre }}</option>
+                    }
+                  </select>
+                </td>
+                <td class="num">
+                  <input
+                    type="text"
+                    inputmode="decimal"
+                    [value]="editPrecio()"
+                    (input)="editPrecio.set(valor($event))"
+                  />
+                </td>
+                <td></td>
+                <td class="acciones">
+                  <button type="button" (click)="guardarEdicion()" [disabled]="guardando()">Guardar</button>
+                  <button type="button" class="secundario" (click)="cancelarEdicion()">Cancelar</button>
+                </td>
+              </tr>
+            } @else {
+              <tr [class.inactivo]="p.activo === false">
+                <td>{{ p.nombre }}</td>
+                <td class="num">$ {{ p.precio | number: '1.2-2' }}</td>
+                <td>{{ p.activo === false ? 'Dado de baja' : 'Activo' }}</td>
+                <td class="acciones">
+                  <button type="button" class="secundario" (click)="editar(p)" [disabled]="guardando()">Editar</button>
+                  <button type="button" class="secundario" (click)="alternarActivo(p)" [disabled]="guardando()">
+                    {{ p.activo === false ? 'Activar' : 'Dar de baja' }}
+                  </button>
+                </td>
+              </tr>
+            }
+          }
+        </tbody>
+      </table>
+    }
+  }
+</section>
