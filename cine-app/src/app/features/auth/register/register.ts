@@ -68,7 +68,6 @@ export class Register {
   async enviar() {
     if (this.cargando()) return;
     if (!this.registerForm().valid()) return;
-    if (!this.registerForm().valid()) return;
 
     if (this.passwordsNoCoinciden()) {
       this.errorMsg.set('Las contraseñas no coinciden');
