@@ -10,9 +10,9 @@ Web de un cine de un solo edificio: cartelera, compra de entradas con mapa de bu
 
 | Rol | Mail | Contraseña |
 | --- | --- | --- |
-| Admin | _completar_ | _completar_ |
-| Empleado | _completar_ | _completar_ |
-| Cliente | _completar_ | _completar_ |
+| Admin | admin@cine.com | 123456 |
+| Empleado | empleado@cine.com | 123456 |
+| Cliente | cliente1@cine.com | 123456 |
 
 ## Cómo correrlo
 
