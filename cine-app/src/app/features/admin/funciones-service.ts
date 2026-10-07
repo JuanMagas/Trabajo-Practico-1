@@ -67,6 +67,18 @@ export class FuncionesService {
   ): Promise<{ error: string | null; funcion?: Funcion }> {
     const inicioNueva = this.horaAMinutos(input.horaInicio);
     const finNueva = inicioNueva + duracionPelicula;
+
+    // La base exige hora_fin > hora_inicio, así que una función no puede cruzar la medianoche
+    if (finNueva >= 24 * 60) {
+      const maxInicio = 24 * 60 - duracionPelicula - 1;
+      return {
+        error:
+          maxInicio >= 0
+            ? `La función terminaría después de las 00:00. Para esta película, el último inicio posible es a las ${this.minutosAHora(maxInicio)}.`
+            : 'La película dura demasiado para entrar en un mismo día.',
+      };
+    }
+
     const horaFinReal = this.minutosAHora(finNueva);
 
     const { data: salas } = await this.supabase.from('salas').select('*').order('numero');
@@ -107,7 +119,7 @@ export class FuncionesService {
           .select()
           .single();
 
-        if (error) return { error: 'No se pudo guardar la función' };
+        if (error) return { error: `No se pudo guardar la función: ${error.message}` };
         return { error: null, funcion: this.mapDesdeDb(data) };
       }
     }

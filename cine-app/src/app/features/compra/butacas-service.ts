@@ -40,6 +40,9 @@ export class ButacasService {
     const expiraEn = new Date(Date.now() + this.MINUTOS_RESERVA * 60 * 1000).toISOString();
     const rechazadas: ButacaOcupada[] = [];
 
+    // Libera las reservas vencidas: si no, su fila bloquearía el insert de la nueva reserva
+    await this.supabase.rpc('liberar_reservas_vencidas');
+
     for (const b of butacas) {
       const { error } = await this.supabase.from('butacas_reservadas').insert({
         funcion_id: funcionId,

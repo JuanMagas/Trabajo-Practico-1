@@ -7,10 +7,11 @@ import { CarritoCandyService } from '../carrito-candy-service';
 import { AuthService } from '../../../core/services/auth';
 import { obtenerSesionCompraId } from '../../../shared/utils/sesion';
 import { ResumenCompra } from '../../../models/resumen-compra';
+import { VipHighlight } from '../../../shared/directivas/vip-highlight';
 
 @Component({
   selector: 'app-checkout',
-  imports: [DecimalPipe],
+  imports: [DecimalPipe, VipHighlight],
   templateUrl: './checkout.html',
   styleUrl: './checkout.css',
 })

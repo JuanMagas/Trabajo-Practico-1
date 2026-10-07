@@ -1,0 +1,123 @@
+.puntos { 
+    max-width: 760px; 
+    margin: 0 auto; 
+    padding: 1.5rem 1rem 3rem; 
+}
+
+.saldo { 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 1rem 1.25rem; 
+    display: grid; 
+    gap: 0.25rem; 
+}
+
+.saldo-label { 
+    font-size: 0.8rem; 
+    color: #666; 
+}
+
+.saldo strong { 
+    font-size: 2rem; 
+}
+
+.saldo small { 
+    color: #666; 
+}
+
+.error { 
+    background: #fdecea; 
+    border: 1px solid #f5a8a0; 
+    padding: 0.6rem 0.9rem; 
+    border-radius: 6px; 
+}
+
+.canje-ok { 
+    border: 2px solid #2e7d32; 
+    background: #f1f8f1; 
+    border-radius: 8px; 
+    padding: 1rem 1.25rem; 
+    margin: 1rem 0; 
+    text-align: center; 
+}
+
+.canje-ok h2 { 
+    margin: 0 0 0.25rem; 
+}
+
+.codigo { 
+    font-family: monospace; 
+    font-size: 0.8rem; 
+    word-break: break-all; 
+}
+
+.nota { 
+    color: #555; 
+    font-size: 0.85rem; 
+}
+
+.recompensas { 
+    list-style: none; 
+    margin: 0; 
+    padding: 0; 
+    display: grid; 
+    gap: 0.75rem; 
+}
+
+.recompensa { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; gap: 1rem;
+    flex-wrap: wrap; 
+    border: 1px solid #ddd; 
+    border-radius: 8px; 
+    padding: 0.85rem 1.1rem; 
+}
+
+.costo { 
+    display: block; 
+    color: #666; 
+    font-size: 0.85rem;
+}
+
+.confirmar { 
+    display: flex; 
+    gap: 0.5rem; 
+    align-items: center; 
+    flex-wrap: wrap; 
+}
+
+button { 
+    padding: 0.5rem 1rem; 
+    border-radius: 6px; 
+    border: 1px solid #111; 
+    background: #111; 
+    color: #fff; 
+    cursor: pointer; 
+    font: inherit; 
+}
+
+button.secundario { 
+    background: #fff; 
+    color: #111; 
+}
+
+button:disabled { 
+    opacity: 0.5; 
+    cursor: not-allowed; 
+}
+
+.historial { 
+    width: 100%; 
+    border-collapse: collapse; 
+}
+
+.historial th, .historial td 
+{ text-align: left; 
+    padding: 0.5rem; 
+    border-bottom: 1px solid #eee; 
+}
+
+.vacio { 
+    color: #555; 
+}

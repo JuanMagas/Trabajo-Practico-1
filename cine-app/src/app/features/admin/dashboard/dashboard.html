@@ -1,1 +1,72 @@
-<p>dashboard works!</p>
+<main class="admin-dashboard">
+  <h1>Panel de administración</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <section class="kpis">
+      <div class="kpi">
+        <span>Hoy</span>
+        <strong>${{ (hoy()?.facturacion ?? 0) | number: '1.0-0' }}</strong>
+        <small>{{ hoy()?.entradas ?? 0 }} entradas</small>
+      </div>
+      <div class="kpi">
+        <span>Últimos 7 días</span>
+        <strong>${{ facturacion7() | number: '1.0-0' }}</strong>
+        <small>{{ entradas7() }} entradas</small>
+      </div>
+      <div class="kpi">
+        <span>Últimos 30 días</span>
+        <strong>${{ facturacion30() | number: '1.0-0' }}</strong>
+        <small>{{ entradas30() }} entradas</small>
+      </div>
+    </section>
+
+    <section>
+      <h2>Facturación de los últimos 7 días</h2>
+      <div class="barras">
+        @for (f of ultimos7(); track f.dia) {
+          <div class="barra-col" [title]="(f.dia | fecha) + ': $' + f.facturacion">
+            <div class="barra" [style.height.%]="alto(f)"></div>
+            <span class="etiqueta">{{ f.dia | fecha: 'corta' }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="tops">
+      <div class="top">
+        <span>Película más vista (esta semana)</span>
+        @if (topPelicula(); as p) {
+          <strong>{{ p.titulo }}</strong>
+          <small>{{ p.entradas }} entradas</small>
+        } @else {
+          <small>Sin ventas todavía.</small>
+        }
+      </div>
+
+      <div class="top">
+        <span>Producto más vendido (30 días)</span>
+        @if (topProducto(); as p) {
+          <strong>{{ p.nombre }}</strong>
+          <small>{{ p.cantidad }} unidades</small>
+        } @else {
+          <small>Sin ventas todavía.</small>
+        }
+      </div>
+    </section>
+  }
+
+  <section>
+    <h2>Gestión</h2>
+    <nav class="secciones">
+      @for (s of secciones; track s.ruta) {
+        <a [routerLink]="s.ruta">{{ s.titulo }}</a>
+      }
+    </nav>
+  </section>
+</main>

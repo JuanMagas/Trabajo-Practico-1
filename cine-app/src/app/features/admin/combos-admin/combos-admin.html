@@ -1,0 +1,109 @@
+<main class="admin-combos">
+  <h1>Combos</h1>
+  <p class="nota">
+    Un combo agrupa productos del candy bar a un precio fijo. Si incluye entrada, ese precio cubre
+    también una butaca: en la compra, la butaca más barata queda en $0 por cada combo.
+  </p>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+  @if (mensaje()) {
+    <p class="ok">{{ mensaje() }}</p>
+  }
+
+  <form class="alta" (submit)="$event.preventDefault(); guardar()">
+    <h2>{{ editandoId() ? 'Editar combo' : 'Nuevo combo' }}</h2>
+
+    <label>
+      Nombre
+      <input type="text" [value]="nombre()" (input)="nombre.set(valor($event))" />
+    </label>
+
+    <label>
+      Precio fijo ($)
+      <input type="number" min="1" step="1" [value]="precio()" (input)="precio.set(valor($event))" />
+    </label>
+
+    <label class="check">
+      <input type="checkbox" [checked]="incluyeEntrada()" (change)="incluyeEntrada.set(!incluyeEntrada())" />
+      Incluye una entrada
+    </label>
+
+    <fieldset>
+      <legend>Productos (cantidad 0 = no incluido)</legend>
+      @for (p of productos(); track p.id) {
+        <div class="producto-fila">
+          <span>{{ p.nombre }} <small>($ {{ p.precio | number: '1.0-0' }})</small></span>
+          <input
+            type="number"
+            min="0"
+            max="20"
+            step="1"
+            [value]="cantidadDe(p.id)"
+            (input)="cambiarCantidad(p.id, $event)"
+          />
+        </div>
+      } @empty {
+        <p class="vacio">Primero cargá productos en el candy bar.</p>
+      }
+    </fieldset>
+
+    @if (itemsElegidos().length > 0) {
+      <p class="referencia">
+        Los productos por separado suman $ {{ valorSeparado() | number: '1.0-0' }}
+        @if (incluyeEntrada()) {
+          (más el valor de la entrada).
+        }
+      </p>
+    }
+
+    <div class="acciones">
+      <button type="submit" [disabled]="!puedeGuardar()">
+        {{ guardando() ? 'Guardando...' : editandoId() ? 'Guardar cambios' : 'Crear combo' }}
+      </button>
+      @if (editandoId()) {
+        <button type="button" class="secundario" (click)="limpiar()">Cancelar edición</button>
+      }
+    </div>
+  </form>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Combo</th>
+        <th>Contenido</th>
+        <th>Precio</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of combos(); track c.id) {
+        <tr [class.inactivo]="!c.activo">
+          <td>{{ c.nombre }}</td>
+          <td>
+            @if (c.incluyeEntrada) {
+              1 entrada +
+            }
+            @for (i of c.items; track i.productoId; let ultimo = $last) {
+              {{ i.cantidad }} × {{ i.nombre }}@if (!ultimo) { + }
+            }
+          </td>
+          <td>$ {{ c.precio | number: '1.0-0' }}</td>
+          <td>{{ c.activo ? 'Activo' : 'Desactivado' }}</td>
+          <td class="acciones-fila">
+            <button type="button" class="secundario" (click)="editar(c)">Editar</button>
+            <button type="button" class="secundario" [disabled]="guardando()" (click)="alternarActivo(c)">
+              {{ c.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="5">Todavía no hay combos.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</main>

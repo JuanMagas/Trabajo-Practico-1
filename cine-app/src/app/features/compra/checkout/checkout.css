@@ -123,3 +123,8 @@ button:disabled {
   font-size: 0.9rem;
   cursor: pointer;
 }
+
+.en-combo {
+  color: #1b5e20;
+  font-weight: 600;
+}

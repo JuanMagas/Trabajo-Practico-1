@@ -1,8 +1,12 @@
-export type AccionLog = 'crear-funcion' | 'modificar-precio' | 'validar-qr' | 'entregar-candy';
+export type AccionLog =
+  | 'crear-funcion'
+  | 'modificar-precio'
+  | 'validar-qr'
+  | 'entregar-candy'
+  | 'entregar-canje';
 
 export interface LogActividad {
-  id: string;
-  usuarioId: string;
+  usuario: string;
   accion: AccionLog;
   detalle: string;
   fecha: string;

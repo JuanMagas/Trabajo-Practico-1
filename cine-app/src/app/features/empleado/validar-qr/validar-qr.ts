@@ -1,5 +1,5 @@
 import { Component, ElementRef, computed, inject, signal, viewChild } from '@angular/core';
-import { ValidacionService, ResultadoValidacion, ProductoEntregado } from '../validacion-service';
+import { ValidacionService, ResultadoValidacion, ProductoEntregado, CanjeEntregado } from '../validacion-service';
 
 @Component({
   selector: 'app-validar-qr',
@@ -16,6 +16,7 @@ export class ValidarQr {
   procesando = signal(false);
   resultado = signal<ResultadoValidacion | null>(null);
   entrega = signal<ProductoEntregado[] | null>(null);
+  canje = signal<CanjeEntregado | null>(null);
   errorMsg = signal<string | null>(null);
 
   puedeActuar = computed(() => this.codigo().trim().length > 0 && !this.procesando());
@@ -47,12 +48,24 @@ export class ValidarQr {
     });
   }
 
+  entregarCanje() {
+    return this.ejecutar(async () => {
+      const { canje, error } = await this.validacionService.entregarCanje(this.codigo());
+      if (error || !canje) {
+        this.errorMsg.set(error ?? 'No se pudo registrar el canje');
+      } else {
+        this.canje.set(canje);
+      }
+    });
+  }
+
   private async ejecutar(accion: () => Promise<void>) {
     if (!this.puedeActuar()) return;
 
     this.procesando.set(true);
     this.resultado.set(null);
     this.entrega.set(null);
+    this.canje.set(null);
     this.errorMsg.set(null);
 
     await accion();

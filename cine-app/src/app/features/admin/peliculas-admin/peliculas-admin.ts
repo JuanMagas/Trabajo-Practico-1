@@ -3,10 +3,11 @@ import { PeliculasService } from '../../peliculas/peliculas-service';
 import { PeliculasAdminService } from '../peliculas-admin-service';
 import { PeliculaCompleta } from '../../../models/pelicula-completa';
 import { Genero } from '../../../models/genero';
+import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
 
 @Component({
   selector: 'app-peliculas-admin',
-  imports: [],
+  imports: [DuracionPipe],
   templateUrl: './peliculas-admin.html',
   styleUrl: './peliculas-admin.css',
 })

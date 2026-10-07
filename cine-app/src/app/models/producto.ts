@@ -4,6 +4,7 @@ export interface Producto {
   nombre: string;
   precio: number;
   activo?: boolean; // solo lo usa el admin; el catálogo público trae únicamente activos
+  comboId?: string | null; // si no es null, es el producto virtual de un combo
 }
 
 // Lo único que el cliente le manda al servidor sobre el candy: qué y cuántos.

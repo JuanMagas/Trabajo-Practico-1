@@ -65,6 +65,7 @@ export class ComprasService {
         tipo: i.tipo,
         precioUnitario: Number(i.precio_unitario),
         precioFinal: Number(i.precio_final),
+        enCombo: !!i.en_combo,
       })),
       productos: (row.productos ?? []).map((p: any) => ({
         productoId: p.producto_id,
@@ -78,6 +79,10 @@ export class ComprasService {
       descuentoPorcentaje: Number(row.descuento_porcentaje),
       cupon: row.cupon,
       total: Number(row.total),
+      creditoDisponible: Number(row.credito_disponible ?? 0),
+      creditoAplicado: Number(row.credito_aplicado ?? 0),
+      aPagar: Number(row.a_pagar ?? row.total),
+      comboEntradas: Number(row.combo_entradas ?? 0),
     };
   }
 

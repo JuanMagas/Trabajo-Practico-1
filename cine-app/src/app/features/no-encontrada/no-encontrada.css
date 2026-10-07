@@ -1,0 +1,38 @@
+.no-encontrada {
+  max-width: 520px;
+  margin: 0 auto;
+  padding: 3rem 1.5rem;
+  text-align: center;
+}
+
+.codigo {
+  margin: 0;
+  font-family: var(--fuente-titulos);
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--acento);
+}
+
+.no-encontrada h1::after {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.detalle {
+  color: var(--texto-suave);
+}
+
+.boton {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 0.6rem 1.2rem;
+  border-radius: 6px;
+  background: var(--tinta);
+  color: #fff;
+  text-decoration: none;
+}
+
+.boton:hover {
+  background: var(--acento);
+}

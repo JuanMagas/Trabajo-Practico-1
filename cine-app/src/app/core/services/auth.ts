@@ -34,24 +34,35 @@ export class AuthService {
   }
 
   async signUp(email: string, password: string, datosPerfil: Omit<Usuario, 'id' | 'email' | 'puntosFidelidad' | 'credito' | 'rol'>) {
-    const { data, error } = await this.supabase.auth.signUp({ email, password });
-
-    if (error || !data.user) {
-      return { error };
-    }
-
-    const { error: errorPerfil } = await this.supabase.from('usuarios').insert({
-      id: data.user.id,
+    // El perfil lo crea un trigger en la base a partir de estos datos (ver supabase/13)
+    const { data, error } = await this.supabase.auth.signUp({
       email,
-      nombre: datosPerfil.nombre,
-      apellido: datosPerfil.apellido,
-      fecha_nacimiento: datosPerfil.fechaNacimiento,
-      tipo_sangre: datosPerfil.tipoSangre,
-      color_ojos: datosPerfil.colorOjos,
-      dias_vacaciones: datosPerfil.diasVacaciones,
+      password,
+      options: {
+        data: {
+          nombre: datosPerfil.nombre,
+          apellido: datosPerfil.apellido,
+          fecha_nacimiento: datosPerfil.fechaNacimiento,
+          tipo_sangre: datosPerfil.tipoSangre,
+          color_ojos: datosPerfil.colorOjos,
+          dias_vacaciones: datosPerfil.diasVacaciones,
+        },
+      },
     });
 
-    return { error: errorPerfil ?? null };
+    if (error) {
+      // Si el trigger falla, Supabase responde con este mensaje genérico
+      const mensaje = error.message.includes('Database error')
+        ? 'No se pudo crear el perfil. Revisá los datos e intentá de nuevo.'
+        : error.message;
+      return { error: { message: mensaje } };
+    }
+
+    if (!data.user) {
+      return { error: { message: 'No se pudo completar el registro' } };
+    }
+
+    return { error: null };
   }
 
   signIn(email: string, password: string) {

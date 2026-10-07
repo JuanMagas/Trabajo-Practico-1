@@ -17,6 +17,11 @@ export interface ProductoEntregado {
   cantidad: number;
 }
 
+export interface CanjeEntregado {
+  tipo: 'entrada' | 'producto';
+  recompensa: string;
+}
+
 @Injectable({ providedIn: 'root' })
 export class ValidacionService {
   private supabase = inject(SupabaseClientService).client;
@@ -60,5 +65,16 @@ export class ValidacionService {
       })),
       error: null,
     };
+  }
+
+  // Un canje de puntos (entrada gratis o producto) se entrega una única vez.
+  async entregarCanje(codigo: string): Promise<{ canje: CanjeEntregado | null; error: string | null }> {
+    const { data, error } = await this.supabase.rpc('entregar_canje', { p_codigo: codigo.trim() });
+
+    if (error) {
+      return { canje: null, error: error.message };
+    }
+
+    return { canje: { tipo: data.tipo, recompensa: data.recompensa }, error: null };
   }
 }

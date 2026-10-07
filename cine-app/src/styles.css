@@ -1,1 +1,91 @@
-/* You can add global styles to this file, and also import other style files */
+/* ============================================================
+   CineApp - identidad visual "cine clásico"
+   Papel crema, tinta oscura, bordó y dorado. Las pantallas usan estas variables.
+   ============================================================ */
+:root {
+  --tinta: #1f1a17;
+  --papel: #f7f1e5;
+  --superficie: #fffdf8;
+  --borde: #d9cdb4;
+  --acento: #8f1d2c;
+  --dorado: #c9a227;
+  --dorado-claro: #e6c75a;
+  --texto-suave: #6b6054;
+  --fuente-titulos: Georgia, 'Times New Roman', serif;
+  --fuente-texto: system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  --radio: 8px;
+}
+
+body {
+  margin: 0;
+  background: var(--papel);
+  color: var(--tinta);
+  font-family: var(--fuente-texto);
+  line-height: 1.5;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--fuente-titulos);
+  letter-spacing: 0.01em;
+}
+
+h1 {
+  position: relative;
+  padding-bottom: 0.4rem;
+}
+
+/* Subrayado dorado, como el filo de una entrada */
+h1::after {
+  content: '';
+  display: block;
+  width: 3.5rem;
+  height: 3px;
+  margin-top: 0.4rem;
+  background: var(--dorado);
+}
+
+a {
+  color: var(--acento);
+}
+
+input:not([type='checkbox']):not([type='radio']):not([type='range']),
+select,
+textarea {
+  font: inherit;
+  padding: 0.5rem 0.65rem;
+  color: var(--tinta);
+  background: var(--superficie);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--acento);
+  outline: none;
+}
+
+button {
+  font-family: inherit;
+}
+
+:focus-visible {
+  outline: 3px solid var(--dorado);
+  outline-offset: 2px;
+}
+
+::selection {
+  background: var(--dorado-claro);
+  color: var(--tinta);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    scroll-behavior: auto !important;
+    transition: none !important;
+    animation: none !important;
+  }
+}

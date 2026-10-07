@@ -56,18 +56,18 @@
           <h3><a [routerLink]="['/pelicula', p.id]">{{ p.titulo }}</a></h3>
 
           <p class="meta">
-            {{ p.duracionMinutos }} min
+            {{ p.duracionMinutos | duracion }}
             @if (p.restriccionEdad) {
               · +{{ p.restriccionEdad }}
             }
-            @for (g of p.generos; track g.id; let primero = $first) {
-              {{ primero ? '·' : ',' }} {{ g.nombre }}
+            @if (p.generos.length) {
+              · {{ p.generos | generos }}
             }
           </p>
 
           <p class="puntaje">
             @if (p.promedio !== null) {
-              <span class="estrella">★</span> {{ p.promedio | number: '1.1-1' }}
+              <span class="estrella">{{ p.promedio | estrellas }}</span>
               <span class="cantidad">({{ p.cantidadResenas }})</span>
             } @else {
               <span class="cantidad">Sin reseñas todavía</span>
@@ -79,7 +79,7 @@
           <div class="funciones">
             @for (f of proximas(p.id).slice(0, maxFunciones); track f.id) {
               <a [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
-                <strong>{{ etiquetaDiaCorto(f.fecha) }} {{ f.horaInicio.slice(0, 5) }}</strong>
+                <strong>{{ f.fecha | fecha:'diaCorto' }} {{ f.horaInicio.slice(0, 5) }}</strong>
                 <span>{{ f.formato }} · {{ f.idioma }} · $ {{ f.precio | number: '1.0-0' }}</span>
               </a>
             }

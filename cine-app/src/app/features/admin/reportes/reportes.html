@@ -1,1 +1,144 @@
-<p>reportes works!</p>
+<main class="admin-reportes">
+  <h1>Reportes</h1>
+
+  <form class="filtros" (submit)="$event.preventDefault(); cargar()">
+    <label>
+      Desde
+      <input type="date" [value]="desde()" (change)="desde.set(valor($event))" />
+    </label>
+
+    <label>
+      Hasta
+      <input type="date" [value]="hasta()" (change)="hasta.set(valor($event))" />
+    </label>
+
+    <button type="submit" [disabled]="cargando()">Ver</button>
+
+    <div class="rapidos">
+      @for (d of rangosRapidos; track d) {
+        <button type="button" class="secundario" [disabled]="cargando()" (click)="rangoRapido(d)">
+          {{ d }} días
+        </button>
+      }
+    </div>
+
+    <div class="exportar">
+      <button type="button" class="secundario" [disabled]="cargando()" (click)="exportarExcel()">Excel (CSV)</button>
+      <button type="button" class="secundario" [disabled]="cargando() || exportando()" (click)="exportarPdf()">PDF</button>
+    </div>
+  </form>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <section class="kpis">
+      <div class="kpi">
+        <span>Facturación</span>
+        <strong>${{ totalFacturacion() | number: '1.0-0' }}</strong>
+      </div>
+      <div class="kpi">
+        <span>Compras</span>
+        <strong>{{ totalCompras() }}</strong>
+      </div>
+      <div class="kpi">
+        <span>Entradas</span>
+        <strong>{{ totalEntradas() }}</strong>
+      </div>
+      <div class="kpi">
+        <span>Crédito usado</span>
+        <strong>${{ totalCredito() | number: '1.0-0' }}</strong>
+      </div>
+    </section>
+
+    <section>
+      <h2>Facturación por día</h2>
+      <div class="barras">
+        @for (f of filas(); track f.dia) {
+          <div class="barra-col" [title]="(f.dia | fecha) + ': $' + f.facturacion">
+            <div class="barra" [style.height.%]="alto(f)"></div>
+            @if (filas().length <= 31) {
+              <span class="etiqueta">{{ f.dia | fecha: 'corta' }}</span>
+            }
+          </div>
+        }
+      </div>
+    </section>
+
+        <div class="rankings">
+      <section>
+        <h2>Películas por semana (top 5)</h2>
+        @for (g of gruposSemana(); track g.periodo) {
+          <h3 class="periodo">Semana del {{ g.periodo | fecha }}</h3>
+          @for (p of g.items; track p.titulo) {
+            <div class="ranking-fila">
+              <span>{{ p.titulo }}</span>
+              <div class="fondo"><div class="relleno" [style.width.%]="ancho(p.entradas, g.items)"></div></div>
+              <strong>{{ p.entradas }}</strong>
+            </div>
+          }
+        } @empty {
+          <p class="vacio">Sin ventas.</p>
+        }
+      </section>
+
+      <section>
+        <h2>Películas por mes (top 5)</h2>
+        @for (g of gruposMes(); track g.periodo) {
+          <h3 class="periodo">{{ g.periodo | fecha: 'mes' }}</h3>
+          @for (p of g.items; track p.titulo) {
+            <div class="ranking-fila">
+              <span>{{ p.titulo }}</span>
+              <div class="fondo"><div class="relleno" [style.width.%]="ancho(p.entradas, g.items)"></div></div>
+              <strong>{{ p.entradas }}</strong>
+            </div>
+          }
+        } @empty {
+          <p class="vacio">Sin ventas.</p>
+        }
+      </section>
+
+      <section>
+        <h2>Productos (en el rango)</h2>
+          @for (p of productos(); track p.nombre) {
+          <div class="ranking-fila">
+            <span>{{ p.nombre }}</span>
+            <div class="fondo"><div class="relleno" [style.width.%]="ancho(p.cantidad, productos())"></div></div>
+            <strong>{{ p.cantidad }}</strong>
+          </div>
+        } @empty {
+          <p class="vacio">Sin ventas.</p>
+        }
+      </section>
+    </div>
+
+    <section>
+      <h2>Detalle por día</h2>
+      <table class="tabla">
+        <thead>
+          <tr>
+            <th>Día</th>
+            <th>Compras</th>
+            <th>Entradas</th>
+            <th>Facturación</th>
+            <th>Crédito usado</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (f of filas(); track f.dia) {
+            <tr>
+              <td>{{ f.dia | fecha }}</td>
+              <td>{{ f.compras }}</td>
+              <td>{{ f.entradas }}</td>
+              <td>${{ f.facturacion | number: '1.0-0' }}</td>
+              <td>${{ f.creditoUsado | number: '1.0-0' }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</main>

@@ -85,3 +85,73 @@ button:disabled {
   opacity: 0.4;
   cursor: not-allowed;
 }
+
+.combos {
+  margin: 1rem 0 1.5rem;
+  padding: 1rem;
+  background: #fff8e1;
+  border: 2px solid #b8860b;
+  border-radius: 10px;
+}
+
+.combos-titulo {
+  margin: 0 0 0.3rem;
+  color: #7a5a00;
+}
+
+.combos-ayuda {
+  margin: 0 0 0.8rem;
+  font-size: 0.85rem;
+  color: #7a5a00;
+}
+
+.combos-lista {
+  display: grid;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.combo {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.7rem 0.9rem;
+  background: #fff;
+  border: 1px solid #e0c36a;
+  border-radius: 8px;
+}
+
+.combo-info {
+  display: grid;
+  flex: 1;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.combo-nombre {
+  font-size: 1.05rem;
+}
+
+.combo-detalle {
+  font-size: 0.9rem;
+  color: #555;
+}
+
+.combo-ahorro {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #1b5e20;
+}
+
+.combo-precio {
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+@media (max-width: 600px) {
+  .combo {
+    flex-wrap: wrap;
+  }
+}

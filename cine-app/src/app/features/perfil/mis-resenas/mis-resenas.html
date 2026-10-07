@@ -1,1 +1,91 @@
-<p>mis-resenas works!</p>
+<main class="resenas">
+  <h1>Mis reseñas</h1>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else if (resenas().length === 0) {
+    <p class="vacio">
+      Todavía no escribiste reseñas. Podés hacerlo desde la página de cada película.
+      <a routerLink="/">Ver la cartelera</a>
+    </p>
+  } @else {
+    <ul class="lista">
+      @for (r of resenas(); track r.id) {
+        <li class="tarjeta">
+          @if (r.imagenUrl) {
+            <img [src]="r.imagenUrl" [alt]="'Póster de ' + r.titulo" loading="lazy" />
+          } @else {
+            <div class="sin-poster"></div>
+          }
+
+          <div class="contenido">
+            <h2>
+              <a [routerLink]="['/pelicula', r.peliculaId]">{{ r.titulo }}</a>
+            </h2>
+
+            @if (editandoId() === r.id) {
+              <div class="estrellas-editor" role="group" aria-label="Calificación">
+                @for (n of valores; track n) {
+                  <button
+                    type="button"
+                    class="estrella"
+                    [class.activa]="n <= editEstrellas()"
+                    [attr.aria-label]="n + ' estrellas'"
+                    (click)="editEstrellas.set(n)"
+                  >
+                    ★
+                  </button>
+                }
+              </div>
+
+              <textarea
+                rows="3"
+                maxlength="280"
+                [value]="editComentario()"
+                (input)="onComentario($event)"
+              ></textarea>
+              <span class="contador">{{ editComentario().length }}/280</span>
+
+              <div class="acciones">
+                <button type="button" [disabled]="guardando() || editEstrellas() < 1" (click)="guardar(r)">
+                  Guardar
+                </button>
+                <button type="button" class="secundario" [disabled]="guardando()" (click)="cancelarEdicion()">
+                  Cancelar
+                </button>
+              </div>
+            } @else {
+              <p class="puntaje">
+                <span class="estrellas">{{ r.estrellas | estrellas }}</span>
+                <span class="fecha">{{ r.fecha | date: 'dd/MM/yyyy' }}</span>
+              </p>
+
+              @if (r.comentario) {
+                <p class="comentario">{{ r.comentario }}</p>
+              }
+
+              @if (borrandoId() === r.id) {
+                <div class="confirmar">
+                  <span>¿Eliminar esta reseña?</span>
+                  <button type="button" class="peligro" [disabled]="guardando()" (click)="eliminar(r)">
+                    Sí, eliminar
+                  </button>
+                  <button type="button" class="secundario" (click)="borrandoId.set(null)">No</button>
+                </div>
+              } @else {
+                <div class="acciones">
+                  <button type="button" class="secundario" (click)="editar(r)">Editar</button>
+                  <button type="button" class="secundario" (click)="borrandoId.set(r.id)">Eliminar</button>
+                </div>
+              }
+            }
+          </div>
+        </li>
+      }
+    </ul>
+  }
+</main>

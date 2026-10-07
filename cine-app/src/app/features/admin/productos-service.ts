@@ -18,21 +18,23 @@ export interface DatosProducto {
 export class ProductosService {
   private supabase = inject(SupabaseClientService).client;
 
-  private mapProducto(p: any): Producto {
+    private mapProducto(p: any): Producto {
     return {
       id: p.id,
       categoriaId: p.categoria_id,
       nombre: p.nombre,
       precio: Number(p.precio),
       activo: p.activo,
+      comboId: p.combo_id ?? null,
     };
   }
 
   // ---------- Público (candy bar): categorías con sus productos activos ----------
+  // Los productos virtuales de los combos no se listan acá: se muestran en la sección "Combos".
   async obtenerCatalogo(): Promise<{ categorias: CategoriaConProductos[]; error: string | null }> {
     const { data, error } = await this.supabase
       .from('categorias_productos')
-      .select('id, nombre, productos(id, categoria_id, nombre, precio, activo)')
+      .select('id, nombre, productos(id, categoria_id, nombre, precio, activo, combo_id)')
       .eq('productos.activo', true)
       .order('nombre');
 
@@ -44,6 +46,7 @@ export class ProductosService {
         nombre: c.nombre,
         productos: (c.productos ?? [])
           .map((p: any) => this.mapProducto(p))
+          .filter((p: Producto) => !p.comboId)
           .sort((a: Producto, b: Producto) => a.nombre.localeCompare(b.nombre)),
       }))
       .filter((c: CategoriaConProductos) => c.productos.length > 0); // no mostrar categorías vacías
@@ -53,21 +56,29 @@ export class ProductosService {
 
   // ---------- Admin ----------
   // Todas las categorías (también las vacías) con todos sus productos (también los dados de baja).
+  // Los productos virtuales de los combos se ocultan: su precio se edita desde "Combos".
   async obtenerTodoAdmin(): Promise<{ categorias: CategoriaConProductos[]; error: string | null }> {
     const { data, error } = await this.supabase
       .from('categorias_productos')
-      .select('id, nombre, productos(id, categoria_id, nombre, precio, activo)')
+      .select('id, nombre, productos(id, categoria_id, nombre, precio, activo, combo_id)')
       .order('nombre');
 
     if (error) return { categorias: [], error: error.message };
 
-    const categorias = (data ?? []).map((c: any) => ({
-      id: c.id,
-      nombre: c.nombre,
-      productos: (c.productos ?? [])
-        .map((p: any) => this.mapProducto(p))
-        .sort((a: Producto, b: Producto) => a.nombre.localeCompare(b.nombre)),
-    }));
+    const categorias = (data ?? [])
+      .map((c: any) => {
+        const todos = (c.productos ?? []).map((p: any) => this.mapProducto(p));
+        return {
+          id: c.id,
+          nombre: c.nombre,
+          soloCombos: todos.length > 0 && todos.every((p: Producto) => !!p.comboId),
+          productos: todos
+            .filter((p: Producto) => !p.comboId)
+            .sort((a: Producto, b: Producto) => a.nombre.localeCompare(b.nombre)),
+        };
+      })
+      .filter((c: any) => !c.soloCombos) // la categoría "Combos" no se gestiona acá
+      .map(({ soloCombos, ...resto }: any) => resto as CategoriaConProductos);
 
     return { categorias, error: null };
   }

@@ -1,0 +1,62 @@
+<main class="admin-recompensas">
+  <h1>Recompensas</h1>
+  <p class="nota">Definí cuántos puntos cuesta cada recompensa. Las desactivadas dejan de verse para los clientes, pero se conserva el historial.</p>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form class="alta" (submit)="$event.preventDefault(); crear()">
+    <h2>Nueva recompensa</h2>
+    <label>
+      Tipo
+      <select [value]="tipo()" (change)="tipo.set(valor($event) === 'producto' ? 'producto' : 'entrada')">
+        <option value="entrada">Entrada gratis</option>
+        <option value="producto">Producto del candy bar</option>
+      </select>
+    </label>
+
+    @if (tipo() === 'producto') {
+      <label>
+        Producto
+        <select [value]="productoId()" (change)="productoId.set(valor($event))">
+          <option value="">Elegí un producto</option>
+          @for (p of productos(); track p.id) {
+            <option [value]="p.id">{{ p.nombre }}</option>
+          }
+        </select>
+      </label>
+    }
+
+    <label>
+      Puntos que cuesta
+      <input type="number" min="1" step="1" [value]="puntos() ?? ''" (input)="puntos.set(valor($event) === '' ? null : +valor($event))" />
+    </label>
+
+    <button type="submit" [disabled]="!puedeCrear()">Agregar</button>
+  </form>
+
+  <table class="tabla">
+    <thead>
+      <tr><th>Recompensa</th><th>Puntos</th><th>Estado</th><th></th></tr>
+    </thead>
+    <tbody>
+      @for (r of recompensas(); track r.id) {
+        <tr [class.inactiva]="!r.activo">
+          <td>{{ r.nombre }}</td>
+          <td>
+            <input type="number" min="1" step="1" class="puntos-input" [value]="r.puntosCosto" (change)="cambiarPuntos(r, $event)" />
+          </td>
+          <td>{{ r.activo ? 'Activa' : 'Desactivada' }}</td>
+          <td>
+            <button type="button" class="secundario" [disabled]="guardando()" (click)="alternarActivo(r)">
+              {{ r.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr><td colspan="4">Todavía no hay recompensas.</td></tr>
+      }
+    </tbody>
+  </table>
+</main>

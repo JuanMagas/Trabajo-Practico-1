@@ -7,7 +7,11 @@ import { ResenasService, ResenaPublica } from '../resenas-service';
 import { AuthService } from '../../../core/services/auth';
 import { PeliculaCompleta } from '../../../models/pelicula-completa';
 import { Funcion } from '../../../models/funcion';
-import { esFutura, etiquetaDia } from '../../../shared/utils/fechas';
+import { esFutura, hoyArgentina, sumarDias } from '../../../shared/utils/fechas';
+import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
+import { GenerosPipe } from '../../../shared/pipes/generos-pipe';
+import { EstrellasPipe } from '../../../shared/pipes/estrellas-pipe';
+import { FechaPipe } from '../../../shared/pipes/fecha-pipe';
 
 interface DiaFunciones {
   fecha: string;
@@ -16,7 +20,7 @@ interface DiaFunciones {
 
 @Component({
   selector: 'app-detalle',
-  imports: [DecimalPipe, DatePipe, RouterLink],
+  imports: [DecimalPipe, DatePipe, RouterLink, DuracionPipe, GenerosPipe, EstrellasPipe, FechaPipe],
   templateUrl: './detalle.html',
   styleUrl: './detalle.css',
 })
@@ -29,7 +33,6 @@ export class Detalle implements OnInit {
 
   private peliculaId = this.route.snapshot.paramMap.get('id')!;
 
-  readonly etiquetaDia = etiquetaDia;
   readonly opcionesEstrellas = [1, 2, 3, 4, 5];
 
   cargando = signal(true);
@@ -47,6 +50,7 @@ export class Detalle implements OnInit {
 
   // Funciones que todavía no empezaron, agrupadas por día
   funcionesPorDia = computed<DiaFunciones[]>(() => {
+    
     const futuras = this.funciones()
       .filter((f) => f.peliculaId === this.peliculaId && esFutura(f.fecha, f.horaInicio))
       .sort((a, b) => (a.fecha + a.horaInicio).localeCompare(b.fecha + b.horaInicio));
@@ -59,6 +63,22 @@ export class Detalle implements OnInit {
     }
     return dias;
   });
+
+    // La venta abre 7 días antes del estreno (el servidor lo valida igual)
+  ventaDesde = computed(() => {
+    const p = this.pelicula();
+    return p ? sumarDias(p.fechaEstreno, -7) : null;
+  });
+
+  ventaAbierta = computed(() => {
+    const desde = this.ventaDesde();
+    return desde === null || hoyArgentina() >= desde;
+  });
+
+  // Solo para mostrar: el precio que se cobra lo calcula siempre el servidor
+  enPreventa(f: Funcion): boolean {
+    return f.precioPreventa != null && f.fechaFinPreventa != null && f.fechaFinPreventa >= hoyArgentina();
+  }
 
   constructor() {
     // La sesión puede resolverse después de que la pantalla carga (F5): cuando

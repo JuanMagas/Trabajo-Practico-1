@@ -5,7 +5,11 @@ import { PeliculasService } from '../peliculas-service';
 import { FuncionesService } from '../../admin/funciones-service';
 import { PeliculaCompleta } from '../../../models/pelicula-completa';
 import { Funcion } from '../../../models/funcion';
-import { esFutura, etiquetaDiaCorto } from '../../../shared/utils/fechas';
+import { esFutura } from '../../../shared/utils/fechas';
+import { DuracionPipe } from '../../../shared/pipes/duracion-pipe';
+import { GenerosPipe } from '../../../shared/pipes/generos-pipe';
+import { EstrellasPipe } from '../../../shared/pipes/estrellas-pipe';
+import { FechaPipe } from '../../../shared/pipes/fecha-pipe';
 
 // "Acción" y "accion" deben coincidir al buscar
 function normalizar(texto: string): string {
@@ -14,7 +18,7 @@ function normalizar(texto: string): string {
 
 @Component({
   selector: 'app-listado',
-  imports: [DecimalPipe, RouterLink],
+  imports: [DecimalPipe, RouterLink, DuracionPipe, GenerosPipe, EstrellasPipe, FechaPipe],
   templateUrl: './listado.html',
   styleUrl: './listado.css',
 })
@@ -23,7 +27,6 @@ export class Listado implements OnInit {
   private funcionesService = inject(FuncionesService);
 
   readonly maxFunciones = 4; // más que eso va en el detalle: evita pantallas larguísimas
-  readonly etiquetaDiaCorto = etiquetaDiaCorto;
 
   cargando = signal(true);
   peliculas = signal<PeliculaCompleta[]>([]);

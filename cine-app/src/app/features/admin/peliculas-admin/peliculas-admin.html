@@ -121,7 +121,7 @@
           <tr>
             <td>{{ p.titulo }}</td>
             <td>{{ p.estado === 'cartelera' ? 'En cartelera' : p.estado === 'archivada' ? 'Archivada' : 'Próximamente' }}</td>
-            <td>{{ p.duracionMinutos }} min</td>
+            <td>{{ p.duracionMinutos | duracion }}</td>
             <td>{{ p.restriccionEdad ? '+' + p.restriccionEdad : '-' }}</td>
             <td>
               @for (g of p.generos; track g.id; let ultimo = $last) {

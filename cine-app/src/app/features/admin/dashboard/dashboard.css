@@ -1,0 +1,99 @@
+.admin-dashboard {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.error {
+  background: #fdecea;
+  border: 1px solid #f5a8a0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi,
+.top {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.9rem;
+}
+
+.kpi span,
+.top span,
+small {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.kpi strong {
+  font-size: 1.5rem;
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  height: 160px;
+  padding: 0.5rem 0 1.5rem;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 1.5rem;
+}
+
+.barra-col {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barra {
+  width: 100%;
+  min-height: 2px;
+  background: #111;
+  border-radius: 3px 3px 0 0;
+}
+
+.etiqueta {
+  position: absolute;
+  bottom: -1.4rem;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 0.7rem;
+  color: #555;
+}
+
+.tops {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.secciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.secciones a {
+  padding: 0.5rem 1rem;
+  border: 1px solid #111;
+  border-radius: 6px;
+  color: #111;
+  text-decoration: none;
+}
+
+.secciones a:hover {
+  background: #111;
+  color: #fff;
+}

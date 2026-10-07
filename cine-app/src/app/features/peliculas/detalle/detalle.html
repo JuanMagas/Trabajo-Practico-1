@@ -18,18 +18,18 @@
         <h2>{{ p.titulo }}</h2>
 
         <p class="meta">
-          {{ p.duracionMinutos }} min
+          {{ p.duracionMinutos | duracion }}
           @if (p.restriccionEdad) {
             · +{{ p.restriccionEdad }}
           }
-          @for (g of p.generos; track g.id; let primero = $first) {
-            {{ primero ? '·' : ',' }} {{ g.nombre }}
+          @if (p.generos.length) {
+            · {{ p.generos | generos }}
           }
         </p>
 
         <p class="puntaje">
           @if (p.promedio !== null) {
-            <span class="estrella">★</span> <strong>{{ p.promedio | number: '1.1-1' }}</strong> / 5
+            <span class="estrella">{{ p.promedio | estrellas }}</span>
             <span class="cantidad">({{ p.cantidadResenas }} reseña{{ p.cantidadResenas === 1 ? '' : 's' }})</span>
           } @else {
             <span class="cantidad">Todavía sin reseñas</span>
@@ -47,12 +47,36 @@
     </div>
 
     <h3>Funciones</h3>
-    @if (funcionesPorDia().length === 0) {
-      <p class="vacio">No hay funciones próximas cargadas.</p>
+    @if (!ventaAbierta()) {
+      <p class="vacio">La venta de entradas abre el {{ ventaDesde() | fecha }}.</p>
+    } @else {
+      @if (funcionesPorDia().length === 0) {
+        <p class="vacio">No hay funciones próximas cargadas.</p>
+      }
+      @for (dia of funcionesPorDia(); track dia.fecha) {
+        <div class="dia">
+          <h4>{{ dia.fecha | fecha:'dia' }}</h4>
+          <div class="funciones">
+            @for (f of dia.funciones; track f.id) {
+              <a [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">
+                <strong>{{ f.horaInicio.slice(0, 5) }}</strong>
+                <span>
+                  {{ f.formato }} · {{ f.idioma }} ·
+                  @if (enPreventa(f)) {
+                    Preventa $ {{ f.precioPreventa | number: '1.0-0' }}
+                  } @else {
+                    $ {{ f.precio | number: '1.0-0' }}
+                  }
+                </span>
+              </a>
+            }
+          </div>
+        </div>
+      }
     }
     @for (dia of funcionesPorDia(); track dia.fecha) {
       <div class="dia">
-        <h4>{{ etiquetaDia(dia.fecha) }}</h4>
+        <h4>{{ dia.fecha | fecha:'dia' }}</h4>
         <div class="funciones">
           @for (f of dia.funciones; track f.id) {
             <a [routerLink]="['/compra', f.id, 'butacas']" class="funcion-boton">

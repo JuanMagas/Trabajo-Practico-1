@@ -2,9 +2,11 @@ import { Component, HostListener, OnDestroy, OnInit, computed, inject, signal } 
 import { DecimalPipe } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CategoriaConProductos, ProductosService } from '../../admin/productos-service';
+import { CombosService } from '../../admin/combos-service';
 import { CarritoCandyService, MAX_POR_PRODUCTO } from '../carrito-candy-service';
 import { ButacasService } from '../butacas-service';
 import { obtenerSesionCompraId } from '../../../shared/utils/sesion';
+import { Combo } from '../../../models/combo';
 
 @Component({
   selector: 'app-candy-bar',
@@ -16,6 +18,7 @@ export class CandyBar implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private productosService = inject(ProductosService);
+  private combosService = inject(CombosService);
   private carrito = inject(CarritoCandyService);
   private butacasService = inject(ButacasService);
 
@@ -30,10 +33,13 @@ export class CandyBar implements OnInit, OnDestroy {
   cargando = signal(true);
   errorMsg = signal<string | null>(null);
   categorias = signal<CategoriaConProductos[]>([]);
+  combos = signal<Combo[]>([]);
 
+  // Un combo viaja en el carrito como un producto más: su id es el del producto virtual
   private precios = computed(() => {
     const mapa = new Map<string, number>();
     for (const c of this.categorias()) for (const p of c.productos) mapa.set(p.id, p.precio);
+    for (const c of this.combos()) mapa.set(c.id, c.precio);
     return mapa;
   });
 
@@ -48,14 +54,24 @@ export class CandyBar implements OnInit, OnDestroy {
       .reduce((suma, i) => suma + (this.precios().get(i.productoId) ?? 0) * i.cantidad, 0)
   );
 
+  hayCombosConEntrada = computed(() => this.combos().some((c) => c.incluyeEntrada));
+
   async ngOnInit() {
     const { categorias, error } = await this.productosService.obtenerCatalogo();
-    this.cargando.set(false);
     if (error) {
+      this.cargando.set(false);
       this.errorMsg.set('No se pudo cargar el candy bar');
       return;
     }
     this.categorias.set(categorias);
+
+    // Si los combos fallan, el candy bar sigue funcionando sin ellos
+    try {
+      this.combos.set(await this.combosService.listar(true));
+    } catch {
+      this.combos.set([]);
+    }
+    this.cargando.set(false);
   }
 
   // Si se sale de la pantalla sin avanzar, las butacas vuelven a quedar libres

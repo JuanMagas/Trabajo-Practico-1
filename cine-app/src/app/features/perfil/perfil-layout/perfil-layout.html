@@ -1,0 +1,7 @@
+<nav class="submenu" aria-label="Secciones del perfil">
+  @for (s of secciones; track s.ruta) {
+    <a [routerLink]="s.ruta" routerLinkActive="activa">{{ s.texto }}</a>
+  }
+</nav>
+
+<router-outlet />

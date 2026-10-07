@@ -1,1 +1,95 @@
-<p>cupones-admin works!</p>
+<main class="admin-cupones">
+  <h1>Cupones</h1>
+  <p class="nota">
+    Se aplica un solo cupón por compra: el de mayor porcentaje que le corresponda al cliente.
+    Solo descuentan entradas, no el candy bar.
+  </p>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <form class="alta" (submit)="$event.preventDefault(); crear()">
+    <h2>Nuevo cupón</h2>
+
+    <label>
+      Tipo
+      <select [value]="tipo()" (change)="tipo.set(valor($event) === 'segmentado-edad' ? 'segmentado-edad' : 'primera-compra')">
+        <option value="primera-compra">Primera compra</option>
+        <option value="segmentado-edad">Segmentado por edad</option>
+      </select>
+    </label>
+
+    @if (tipo() === 'segmentado-edad') {
+      <label>
+        Mayores de (años)
+        <input
+          type="number"
+          min="1"
+          step="1"
+          [value]="edadMinima() ?? ''"
+          (input)="edadMinima.set(valor($event) === '' ? null : +valor($event))"
+        />
+      </label>
+    }
+
+    <label>
+      Descuento (%)
+      <input
+        type="number"
+        min="1"
+        max="100"
+        step="1"
+        [value]="porcentaje() ?? ''"
+        (input)="porcentaje.set(valor($event) === '' ? null : +valor($event))"
+      />
+    </label>
+
+    @if (porcentaje()) {
+      <p class="preview">
+        Ejemplo: entrada de ${{ precioEjemplo }} → ${{ precioEjemplo | precioConDescuento: porcentaje() }}
+      </p>
+    }
+
+    <button type="submit" [disabled]="!puedeCrear()">Agregar</button>
+  </form>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Cupón</th>
+        <th>Descuento (%)</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (c of cupones(); track c.id) {
+        <tr [class.inactivo]="!c.activo">
+          <td>{{ descripcion(c) }}</td>
+          <td>
+            <input
+              type="number"
+              min="1"
+              max="100"
+              step="1"
+              class="pct-input"
+              [value]="c.porcentaje"
+              (change)="cambiarPorcentaje(c, $event)"
+            />
+          </td>
+          <td>{{ c.activo ? 'Activo' : 'Desactivado' }}</td>
+          <td>
+            <button type="button" class="secundario" [disabled]="guardando()" (click)="alternarActivo(c)">
+              {{ c.activo ? 'Desactivar' : 'Activar' }}
+            </button>
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="4">Todavía no hay cupones.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</main>

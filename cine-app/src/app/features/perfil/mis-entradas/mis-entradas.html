@@ -1,1 +1,106 @@
-<p>mis-entradas works!</p>
+<main class="entradas">
+  <h1>Mis entradas</h1>
+
+  <section class="saldo">
+    <div>
+      <span class="saldo-label">Crédito disponible</span>
+      <strong>{{ saldo().credito | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong>
+    </div>
+    <div>
+      <span class="saldo-label">Puntos</span>
+      <strong>{{ saldo().puntos }}</strong>
+    </div>
+  </section>
+
+  @if (aviso()) {
+    <p class="aviso">{{ aviso() }}</p>
+  }
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  <div class="pestanas">
+    <button type="button" [class.activa]="pestana() === 'proximas'" (click)="pestana.set('proximas')">
+      Próximas ({{ proximas().length }})
+    </button>
+    <button type="button" [class.activa]="pestana() === 'historial'" (click)="pestana.set('historial')">
+      Historial ({{ historial().length }})
+    </button>
+  </div>
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else if (visibles().length === 0) {
+    <p class="vacio">
+      @if (pestana() === 'proximas') {
+        No tenés entradas próximas. <a routerLink="/">Ver la cartelera</a>
+      } @else {
+        Todavía no tenés compras en el historial.
+      }
+    </p>
+  } @else {
+    <ul class="lista">
+      @for (c of visibles(); track c.codigoQr) {
+        <li class="tarjeta" [class.cancelada]="c.estado === 'cancelada'">
+          <div class="cabecera">
+            <h2>{{ c.pelicula }}</h2>
+            <span class="estado estado-{{ c.estado }}">{{ etiquetaEstado(c) }}</span>
+          </div>
+
+          <p class="dato">{{ fechaHora(c) }} · Sala {{ c.sala }} · {{ c.formato }} · {{ c.idioma }}</p>
+
+          @if (c.butacas) {
+            <p class="dato">Butacas: <strong>{{ c.butacas }}</strong></p>
+          }
+          @if (c.productos.length) {
+            <p class="dato">
+              Candy:
+              @for (p of c.productos; track p.nombre) {
+                <span>{{ p.cantidad }}× {{ p.nombre }}{{ $last ? '' : ', ' }}</span>
+              }
+              @if (c.estado !== 'cancelada') {
+                · {{ c.candyEntregado ? 'retirado' : 'sin retirar' }}
+              }
+            </p>
+          }
+          @if (c.restriccionEdad) {
+            <p class="dato adulto">+{{ c.restriccionEdad }}: debe asistir un adulto.</p>
+          }
+
+          <p class="dato">
+            Total {{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}
+            @if (c.creditoUsado > 0) {
+              (pagado con crédito: {{ c.creditoUsado | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }})
+            }
+          </p>
+
+          <div class="acciones">
+            @if (c.estado !== 'cancelada') {
+              <a class="boton" [routerLink]="['/compra', c.funcionId, 'confirmacion']" [queryParams]="{ qr: c.codigoQr }">
+                Ver entrada / PDF
+              </a>
+            }
+            @if (c.puedeCancelar && confirmando() !== c.codigoQr) {
+              <button type="button" class="secundario" (click)="pedirCancelar(c.codigoQr)">Cancelar compra</button>
+            }
+          </div>
+
+          @if (confirmando() === c.codigoQr) {
+            <div class="confirmar">
+              <p>
+                ¿Cancelar esta compra? No se devuelve dinero: se acreditan
+                <strong>{{ c.total | currency: 'ARS' : 'symbol-narrow' : '1.0-0' }}</strong> a tu crédito.
+              </p>
+              <button type="button" class="peligro" [disabled]="cancelando()" (click)="confirmarCancelar(c)">
+                Sí, cancelar
+              </button>
+              <button type="button" class="secundario" [disabled]="cancelando()" (click)="descartarCancelar()">
+                No, volver
+              </button>
+            </div>
+          }
+        </li>
+      }
+    </ul>
+  }
+</main>

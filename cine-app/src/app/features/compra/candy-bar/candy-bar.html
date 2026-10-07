@@ -12,8 +12,63 @@
     <p class="error">{{ errorMsg() }}</p>
   }
 
-  @if (!cargando() && !errorMsg() && categorias().length === 0) {
+  @if (!cargando() && !errorMsg() && categorias().length === 0 && combos().length === 0) {
     <p>Por ahora no hay productos disponibles.</p>
+  }
+
+  @if (combos().length > 0) {
+    <div class="combos">
+      <h3 class="combos-titulo">⭐ Combos especiales</h3>
+      @if (hayCombosConEntrada()) {
+        <p class="combos-ayuda">
+          Los combos con entrada reemplazan el precio de una de tus butacas: elegí como máximo
+          tantos combos como butacas reservaste.
+        </p>
+      }
+
+      <ul class="combos-lista">
+        @for (c of combos(); track c.id) {
+          <li class="combo">
+            <div class="combo-info">
+              <strong class="combo-nombre">{{ c.nombre }}</strong>
+              <span class="combo-detalle">
+                @if (c.incluyeEntrada) {
+                  1 entrada +
+                }
+                @for (i of c.items; track i.productoId; let ultimo = $last) {
+                  {{ i.cantidad }} × {{ i.nombre }}@if (!ultimo) { + }
+                }
+              </span>
+              @if (!c.incluyeEntrada && c.valorSeparado > c.precio) {
+                <span class="combo-ahorro">
+                  Ahorrás $ {{ c.valorSeparado - c.precio | number: '1.0-0' }} frente a comprarlos por separado
+                </span>
+              }
+            </div>
+
+            <span class="combo-precio">$ {{ c.precio | number: '1.2-2' }}</span>
+
+            <span class="cantidad">
+              <button
+                type="button"
+                class="paso"
+                aria-label="Quitar uno"
+                (click)="restar(c.id)"
+                [disabled]="cantidad(c.id) === 0"
+              >−</button>
+              <span class="num">{{ cantidad(c.id) }}</span>
+              <button
+                type="button"
+                class="paso"
+                aria-label="Agregar uno"
+                (click)="sumar(c.id)"
+                [disabled]="cantidad(c.id) >= maximo"
+              >+</button>
+            </span>
+          </li>
+        }
+      </ul>
+    </div>
   }
 
   @for (cat of categorias(); track cat.id) {

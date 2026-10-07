@@ -24,7 +24,7 @@
 
     <ul class="items">
       @for (i of r.items; track i.fila + i.columna) {
-        <li>
+        <li [appVipHighlight]="i.tipo">
           <span>
             Butaca {{ i.fila }}{{ i.columna }}
             @if (i.tipo === 'vip') {
@@ -34,7 +34,11 @@
               <strong class="etiqueta accesible">Accesible</strong>
             }
           </span>
-          <span>$ {{ i.precioFinal | number: '1.2-2' }}</span>
+          @if (i.enCombo) {
+            <span class="en-combo">Incluida en tu combo</span>
+          } @else {
+            <span>$ {{ i.precioFinal | number: '1.2-2' }}</span>
+          }
         </li>
       }
     </ul>
@@ -64,6 +68,10 @@
         <p class="descuento">Descuento en entradas ({{ r.descuentoPorcentaje }}%): - $ {{ r.subtotal - r.total | number: '1.2-2' }}</p>
       }
       <p class="total">Total: $ {{ r.total | number: '1.2-2' }}</p>
+      @if (r.creditoAplicado > 0) {
+        <p class="descuento">Crédito aplicado: - $ {{ r.creditoAplicado | number: '1.2-2' }}</p>
+        <p class="total">A pagar: $ {{ r.aPagar | number: '1.2-2' }}</p>
+      }
     </div>
 
     <p class="nota">Pago simulado: no se cobra dinero real.</p>
@@ -77,7 +85,7 @@
     <button type="button" class="secundario" (click)="volver()" [disabled]="procesando()">Volver al candy bar</button>
     @if (resumen()) {
       <button type="button" (click)="pagar()" [disabled]="!puedePagar()">
-        {{ procesando() ? 'Procesando...' : 'Pagar' }}
+        {{ procesando() ? 'Procesando...' : (resumen()!.aPagar === 0 ? 'Confirmar compra' : 'Pagar') }}
       </button>
     }
   </div>

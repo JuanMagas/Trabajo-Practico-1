@@ -4,24 +4,31 @@
   <div class="links">
     <a routerLink="/proximamente">Próximamente</a>
 
-    <ng-container *ngIf="!authService.currentUserId()">
+    @if (!authService.currentUserId()) {
       <a routerLink="/auth/login">Ingresar</a>
       <a routerLink="/auth/register">Registrarme</a>
-    </ng-container>
-
-    <ng-container *ngIf="authService.currentUserId()">
+    } @else {
+      @if (alertas.avisos().length > 0) {
+        <details class="avisos">
+          <summary>🔔 {{ alertas.avisos().length }}</summary>
+          <div class="avisos-lista">
+            @for (a of alertas.avisos(); track a.peliculaId) {
+              <a [routerLink]="['/pelicula', a.peliculaId]" (click)="alertas.marcarAvisada(a.peliculaId)">
+                Ya hay entradas de {{ a.titulo }}
+              </a>
+            }
+          </div>
+        </details>
+      }
       <a routerLink="/perfil/entradas">Mi perfil</a>
 
-      <a *ngIf="authService.perfil()?.rol === 'empleado' || authService.perfil()?.rol === 'admin'"
-         routerLink="/empleado/validar">
-        Validar QR
-      </a>
+      @if (esStaff()) {
+        <a routerLink="/empleado/validar">Validar QR</a>
+      }
 
-      <a *ngIf="authService.perfil()?.rol === 'admin'" routerLink="/admin/dashboard">
-        Admin
-      </a>
+      <a *appSoloAdmin routerLink="/admin/dashboard">Admin</a>
 
       <button (click)="logout()">Salir</button>
-    </ng-container>
+    }
   </div>
 </nav>

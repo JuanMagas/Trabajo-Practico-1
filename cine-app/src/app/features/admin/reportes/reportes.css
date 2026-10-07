@@ -1,0 +1,169 @@
+.admin-reportes {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 1.5rem 1rem 3rem;
+}
+
+.error {
+  background: #fdecea;
+  border: 1px solid #f5a8a0;
+  padding: 0.6rem 0.9rem;
+  border-radius: 6px;
+}
+
+.filtros {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  align-items: end;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.filtros label {
+  display: grid;
+  gap: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.rapidos,
+.exportar {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.exportar {
+  margin-left: auto;
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.kpi {
+  display: grid;
+  gap: 0.25rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 0.9rem;
+}
+
+.kpi span {
+  color: #555;
+  font-size: 0.85rem;
+}
+
+.kpi strong {
+  font-size: 1.4rem;
+}
+
+.barras {
+  display: flex;
+  align-items: flex-end;
+  gap: 3px;
+  height: 180px;
+  padding: 0.5rem 0 1.5rem;
+  border-bottom: 1px solid #ddd;
+}
+
+.barra-col {
+  position: relative;
+  flex: 1;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.barra {
+  width: 100%;
+  min-height: 2px;
+  background: #111;
+  border-radius: 3px 3px 0 0;
+}
+
+.etiqueta {
+  position: absolute;
+  bottom: -1.4rem;
+  left: 50%;
+  transform: translateX(-50%) rotate(-45deg);
+  transform-origin: center;
+  font-size: 0.6rem;
+  white-space: nowrap;
+  color: #555;
+}
+
+.rankings {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.ranking-fila {
+  display: grid;
+  grid-template-columns: 1fr 80px 2rem;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.3rem 0;
+  font-size: 0.9rem;
+}
+
+.fondo {
+  height: 8px;
+  background: #eee;
+  border-radius: 4px;
+}
+
+.relleno {
+  height: 100%;
+  background: #111;
+  border-radius: 4px;
+}
+
+.vacio {
+  color: #777;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th,
+.tabla td {
+  text-align: left;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+button {
+  padding: 0.45rem 0.9rem;
+  border-radius: 6px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+  font: inherit;
+}
+
+button.secundario {
+  background: #fff;
+  color: #111;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.periodo {
+  margin: 1rem 0 0.25rem;
+  font-size: 0.85rem;
+  color: #555;
+  text-transform: capitalize;
+}

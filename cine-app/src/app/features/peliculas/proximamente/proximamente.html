@@ -1,1 +1,72 @@
-<p>proximamente works!</p>
+<main class="proximamente">
+  <h1>Próximamente</h1>
+  <p class="nota">
+    Los estrenos de las próximas semanas. La venta de entradas se abre 7 días antes del estreno.
+    Activá una alerta y te avisamos cuando haya entradas.
+  </p>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <div class="grilla">
+      @for (t of tarjetas(); track t.pelicula.id) {
+        <article class="tarjeta">
+          @if (t.pelicula.imagenUrl) {
+            <img class="afiche" [src]="t.pelicula.imagenUrl" [alt]="'Afiche de ' + t.pelicula.titulo" />
+          }
+
+          <div class="info">
+            <h2>{{ t.pelicula.titulo }}</h2>
+            <p class="estreno">Estreno: {{ t.pelicula.fechaEstreno | fecha: 'dia' }}</p>
+            <p class="meta">
+              {{ t.pelicula.duracionMinutos | duracion }} · {{ t.pelicula.generos | generos }}
+              @if (t.pelicula.restriccionEdad) {
+                · +{{ t.pelicula.restriccionEdad }}
+              }
+            </p>
+            <p class="sinopsis">{{ t.pelicula.sinopsis }}</p>
+
+            @if (t.abierta && t.hayFunciones) {
+              <p class="estado abierta">
+                Venta abierta
+                @if (t.preventa; as pv) {
+                  · Preventa $ {{ pv.precio | number: '1.0-0' }}
+                  (normal $ {{ pv.precioNormal | number: '1.0-0' }}) hasta el {{ pv.hasta | fecha }}
+                }
+              </p>
+              <a class="boton" [routerLink]="['/pelicula', t.pelicula.id]">Ver funciones</a>
+            } @else {
+              <p class="estado">
+                @if (t.abierta) {
+                  La venta ya está abierta, pero todavía no hay funciones cargadas.
+                } @else {
+                  La venta abre el {{ t.ventaDesde | fecha }}.
+                }
+              </p>
+
+              @if (auth.currentUserId()) {
+                <button
+                  type="button"
+                  class="boton"
+                  [class.secundario]="conAlerta().has(t.pelicula.id)"
+                  [disabled]="trabajando() === t.pelicula.id"
+                  (click)="alternarAlerta(t.pelicula.id)"
+                >
+                  {{ conAlerta().has(t.pelicula.id) ? 'Alerta activada · quitar' : '🔔 Avisarme' }}
+                </button>
+              } @else {
+                <a class="boton secundario" routerLink="/auth/login">Ingresá para activar la alerta</a>
+              }
+            }
+          </div>
+        </article>
+      } @empty {
+        <p class="vacio">No hay estrenos próximos por ahora.</p>
+      }
+    </div>
+  }
+</main>

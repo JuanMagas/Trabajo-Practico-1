@@ -1,1 +1,75 @@
-<p>mis-puntos works!</p>
+<main class="puntos">
+  <h1>Mis puntos</h1>
+
+  <section class="saldo">
+    <span class="saldo-label">Puntos acumulados</span>
+    <strong>{{ puntos() }}</strong>
+    <small>Ganás 1 punto por cada peso que pagás. Los puntos no se transfieren.</small>
+  </section>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (ultimo(); as u) {
+    <section class="canje-ok">
+      <h2>¡Canje realizado!</h2>
+      <p>{{ u.nombre }}</p>
+      <img [src]="u.qr" alt="QR del canje" width="180" height="180" />
+      <p class="codigo">{{ u.codigo }}</p>
+      <p class="nota">Presentá este código en boletería o en el candy bar para retirarlo. Se puede usar una sola vez.</p>
+      <button type="button" class="secundario" (click)="ultimo.set(null)">Cerrar</button>
+    </section>
+  }
+
+  <h2>Recompensas</h2>
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else if (recompensas().length === 0) {
+    <p class="vacio">Por ahora no hay recompensas disponibles.</p>
+  } @else {
+    <ul class="recompensas">
+      @for (r of recompensas(); track r.id) {
+        <li class="recompensa">
+          <div>
+            <strong>{{ r.nombre }}</strong>
+            <span class="costo">{{ r.puntosCosto }} puntos</span>
+          </div>
+
+          @if (confirmando() === r.id) {
+            <div class="confirmar">
+              <span>¿Canjear {{ r.puntosCosto }} puntos por {{ r.nombre }}?</span>
+              <button type="button" [disabled]="procesando()" (click)="canjear(r)">Sí, canjear</button>
+              <button type="button" class="secundario" [disabled]="procesando()" (click)="confirmando.set(null)">No</button>
+            </div>
+          } @else {
+            <button type="button" [disabled]="!alcanza(r)" (click)="confirmando.set(r.id)">
+              {{ alcanza(r) ? 'Canjear' : 'Te faltan ' + (r.puntosCosto - puntos()) }}
+            </button>
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  <h2>Historial de canjes</h2>
+  @if (canjes().length === 0) {
+    <p class="vacio">Todavía no canjeaste nada.</p>
+  } @else {
+    <table class="historial">
+      <thead>
+        <tr><th>Fecha</th><th>Recompensa</th><th>Puntos</th><th>Estado</th></tr>
+      </thead>
+      <tbody>
+        @for (c of canjes(); track c.id) {
+          <tr>
+            <td>{{ c.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ c.nombre }}</td>
+            <td>-{{ c.puntosUsados }}</td>
+            <td>{{ c.entregado ? 'Entregado' : 'Pendiente de retirar' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</main>

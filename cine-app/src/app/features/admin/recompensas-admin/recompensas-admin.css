@@ -1,0 +1,13 @@
+.admin-recompensas { max-width: 800px; margin: 0 auto; padding: 1.5rem 1rem 3rem; }
+.nota { color: #555; }
+.error { background: #fdecea; border: 1px solid #f5a8a0; padding: 0.6rem 0.9rem; border-radius: 6px; }
+.alta { display: flex; flex-wrap: wrap; gap: 0.75rem; align-items: end; border: 1px solid #ddd; border-radius: 8px; padding: 1rem; margin: 1rem 0; }
+.alta h2 { flex-basis: 100%; margin: 0; font-size: 1.05rem; }
+.alta label { display: grid; gap: 0.25rem; font-size: 0.85rem; }
+.tabla { width: 100%; border-collapse: collapse; }
+.tabla th, .tabla td { text-align: left; padding: 0.5rem; border-bottom: 1px solid #eee; }
+.inactiva { opacity: 0.55; }
+.puntos-input { width: 6rem; }
+button { padding: 0.45rem 0.9rem; border-radius: 6px; border: 1px solid #111; background: #111; color: #fff; cursor: pointer; font: inherit; }
+button.secundario { background: #fff; color: #111; }
+button:disabled { opacity: 0.5; cursor: not-allowed; }

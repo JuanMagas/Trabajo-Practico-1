@@ -1,1 +1,61 @@
-<p>log-actividad-admin works!</p>
+<main class="admin-log">
+  <h1>Log de actividad</h1>
+  <p class="nota">Muestra hasta 500 registros, de los más nuevos a los más viejos.</p>
+
+  <form class="filtros" (submit)="$event.preventDefault(); buscar()">
+    <label>
+      Acción
+      <select [value]="accion() ?? ''" (change)="cambiarAccion(valor($event))">
+        <option value="">Todas</option>
+        @for (a of acciones; track a.valor) {
+          <option [value]="a.valor">{{ a.etiqueta }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Desde
+      <input type="date" [value]="desde()" (change)="desde.set(valor($event))" />
+    </label>
+
+    <label>
+      Hasta
+      <input type="date" [value]="hasta()" (change)="hasta.set(valor($event))" />
+    </label>
+
+    <button type="submit" [disabled]="cargando()">Filtrar</button>
+  </form>
+
+  @if (error()) {
+    <p class="error">{{ error() }}</p>
+  }
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else {
+    <table class="tabla">
+      <thead>
+        <tr>
+          <th>Fecha</th>
+          <th>Usuario</th>
+          <th>Acción</th>
+          <th>Detalle</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of registros(); track $index) {
+          <tr>
+            <td>{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
+            <td>{{ r.usuario || '—' }}</td>
+            <td>{{ etiqueta(r.accion) }}</td>
+            <td>{{ r.detalle }}</td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="4">No hay registros para ese filtro.</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</main>

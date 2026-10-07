@@ -2,36 +2,93 @@ nav {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem 1.5rem;
-  background: #1a1a1a;
-  color: white;
+  padding: 0.9rem 1.5rem;
+  background: var(--tinta);
+  color: #fff;
+  border-bottom: 4px solid var(--dorado);
 }
 
 .logo {
+  font-family: var(--fuente-titulos);
   font-weight: 700;
-  font-size: 1.2rem;
-  color: white;
+  font-size: 1.35rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--dorado-claro);
   text-decoration: none;
 }
 
 .links {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   gap: 1.2rem;
 }
 
 .links a {
-  color: white;
+  color: #fff;
   text-decoration: none;
   font-size: 0.9rem;
+  padding-bottom: 2px;
+  border-bottom: 2px solid transparent;
+}
+
+.links a:hover {
+  border-bottom-color: var(--dorado);
 }
 
 .links button {
   background: transparent;
-  border: 1px solid white;
-  color: white;
+  border: 1px solid var(--dorado-claro);
+  color: var(--dorado-claro);
   padding: 0.4rem 0.8rem;
   border-radius: 4px;
   cursor: pointer;
   font-size: 0.85rem;
+}
+
+.links button:hover {
+  background: var(--dorado-claro);
+  color: var(--tinta);
+}
+
+.avisos {
+  position: relative;
+}
+
+.avisos summary {
+  cursor: pointer;
+  font-size: 0.9rem;
+  list-style: none;
+}
+
+.avisos-lista {
+  position: absolute;
+  right: 0;
+  top: 2rem;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 220px;
+  background: var(--superficie);
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  overflow: hidden;
+}
+
+.links .avisos-lista a {
+  padding: 0.6rem 0.9rem;
+  color: var(--tinta);
+  border-bottom: 1px solid var(--borde);
+}
+
+.links .avisos-lista a:hover {
+  background: var(--papel);
+}
+
+@media (max-width: 600px) {
+  nav {
+    flex-direction: column;
+    gap: 0.6rem;
+  }
 }

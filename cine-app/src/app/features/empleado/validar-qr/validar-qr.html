@@ -1,8 +1,8 @@
 <section class="validar">
-  <h2>Validar entrada y candy</h2>
+  <h2>Validar entrada, candy y canjes</h2>
   <p class="ayuda">
     Escaneá el QR con el lector o escribí el código a mano. Enter valida la entrada;
-    el otro botón entrega los productos del candy bar.
+    los otros botones entregan el candy de una compra o un canje de puntos.
   </p>
 
   <form (submit)="$event.preventDefault(); validarEntrada()">
@@ -11,7 +11,7 @@
       type="text"
       autocomplete="off"
       autofocus
-      placeholder="Código de la compra"
+      placeholder="Código de la compra o del canje"
       [value]="codigo()"
       (input)="onCodigo($event)"
     />
@@ -20,6 +20,9 @@
     </button>
     <button type="button" class="secundario" (click)="entregarCandy()" [disabled]="!puedeActuar()">
       Entregar candy
+    </button>
+    <button type="button" class="secundario" (click)="entregarCanje()" [disabled]="!puedeActuar()">
+      Entregar canje
     </button>
   </form>
 
@@ -48,6 +51,20 @@
           <li>{{ p.cantidad }} × {{ p.nombre }}</li>
         }
       </ul>
+    </div>
+  }
+
+  @if (canje(); as c) {
+    <div class="resultado aceptada">
+      <strong>✓ CANJE VÁLIDO</strong>
+      <h3>{{ c.recompensa }}</h3>
+      <p>
+        @if (c.tipo === 'entrada') {
+          Emitir una entrada gratis en boletería.
+        } @else {
+          Entregar el producto al cliente.
+        }
+      </p>
     </div>
   }
 </section>

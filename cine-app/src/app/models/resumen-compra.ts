@@ -34,6 +34,10 @@ export interface ResumenCompra {
   descuentoPorcentaje: number; // solo aplica a las entradas
   cupon: string | null;
   total: number;
+  creditoDisponible: number;
+  creditoAplicado: number; // parte del total cubierta con crédito
+  aPagar: number; // lo que falta pagar después del crédito
+  comboEntradas: number; // entradas cubiertas por combos
 }
 
 // Lo que devuelve el servidor (obtener_compra) una vez pagada.
@@ -66,4 +70,13 @@ export interface CompraConfirmada {
   entradas: EntradaConfirmada[];
   productos: ProductoConfirmado[];
   candyEntregado: boolean;
+}
+
+export interface ItemResumen {
+  fila: string;
+  columna: number;
+  tipo: TipoButaca;
+  precioUnitario: number;
+  precioFinal: number; // ya con el descuento aplicado
+  enCombo: boolean; // la entrada está incluida en un combo (precioFinal = 0)
 }
