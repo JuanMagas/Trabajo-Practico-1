@@ -15,7 +15,6 @@ export const adminGuard: CanActivateFn = async () => {
   }
 
   const { data: perfil } = await authService.getPerfil(data.user.id);
-  console.log('perfil traido:', perfil);
 
   if (perfil?.rol === 'admin') return true;
 

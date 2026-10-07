@@ -1,53 +1,44 @@
-# CineApp
+# CineApp — Informe técnico
 
-Web de un cine de un solo edificio: cartelera, compra de entradas con mapa de butacas en tiempo real, candy bar, QR en PDF, programa de puntos, combos, preventa y paneles de administrador y empleado.
+Informe técnico de CineApp: arquitectura, modelo de datos, decisiones y seguridad. Qué hace el sistema para cada usuario se explica en el [Informe funcional](informe-funcional.md), que se entrega por separado.
 
 - **App desplegada:** https://cine-app-magas.web.app
+- **Repositorio:** https://github.com/JuanMagas/Trabajo-Practico-1
 - **Stack:** Angular 21 (standalone, signals, control flow nuevo) · Supabase (Postgres, Auth, Realtime, RLS, RPC) · Firebase Hosting · PWA
-- **Trabajo Práctico 1 — Programación IV (UTN)**
 
-## Usuarios de prueba
+## Trazabilidad: del requerimiento a la implementación
 
-| Rol | Mail | Contraseña |
+| Mail | Requerimiento | Cómo se resolvió |
 | --- | --- | --- |
-| Admin | _completar_ | _completar_ |
-| Empleado | _completar_ | _completar_ |
-| Cliente | _completar_ | _completar_ |
-
-## Cómo correrlo
-
-```bash
-cd cine-app
-npm install
-ng serve          # http://localhost:4200
-```
-
-Hay que crear `src/environments/environment.ts` con las claves del proyecto de Supabase:
-
-```ts
-export const environment = {
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabasePublishableKey: 'TU_CLAVE_PUBLICA',
-};
-```
-
-Para armar la base desde cero, ejecutar en el SQL Editor de Supabase, en este orden, los scripts de `supabase/`:
-
-| Orden | Archivo | Contenido |
-| --- | --- | --- |
-| 1 | `01-esquema.sql` | Tablas, restricciones, RLS y policies |
-| 2 | `02` a `07` | Compras, validación, candy bar, admin de productos, log de funciones, películas y reseñas |
-| 3 | `08-funciones-snapshot.sql` | Crédito, canjes, cancelación, consultas del usuario y triggers de log |
-| 4 | `11-admin-reportes-log-cupones.sql` | Reportes, log de actividad y cupones del admin |
-| 5 | `12-reservas-vencidas.sql` | Barrido de reservas de butacas |
-| 6 | `13-perfil-automatico.sql` | Trigger que crea el perfil al registrarse |
-| 7 | `14-proximamente-alertas.sql` | Venta abierta 7 días antes y alertas |
-| 8 | `15-combos.sql` | Combos con entrada incluida |
-| 9 | `16-seguridad.sql` | Permisos por columna y limpieza de policies |
-
-`00-exportar-esquema.sql` es solo una utilidad que exporta el esquema actual.
-
-Despliegue: `ng build` y `firebase deploy --only hosting`.
+| 1 | Salas de 20 filas con bloques de 4, 20 y 4 butacas | Mapa generado por `layout-sala.ts`; `butacas_reservadas` y `entradas` únicas por `(funcion_id, fila, columna)` |
+| 1 | Películas, horarios, formato (2D–5D) e idioma | Tabla `funciones` con formato e idioma; ABM del admin protegido por RLS con `is_admin()` |
+| 1 | 30 minutos entre funciones de una sala | Asignación automática en `funciones-service.ts` (`crearConAsignacionAutomatica`); validación en el cliente |
+| 1 | Registro con datos personales | Trigger `crear_perfil_usuario` sobre `auth.users`; el rol, los puntos y el crédito nunca los decide el cliente |
+| 1 | Cupón 20% primera compra; compra anónima | Cupón `primera-compra` aplicado en `calcular_compra_base`; las policies y RPC admiten `anon` |
+| 1 | PDF con QR | `qrcode` + `jsPDF` (carga diferida); el QR es `compras.codigo_qr` (UUID) |
+| 2 | Reseñas con promedio | Tabla `resenas` (una por usuario y película) y pipe `estrellas` |
+| 2 | Más vendidas y filtro por géneros | Consulta agregada en Postgres; `pelicula_generos` y pipe `generos` |
+| 3 | Cupones configurables y segmentado por edad | Tabla `cupones`; se toma el mayor porcentaje aplicable, solo sobre entradas |
+| 3 | Candy bar con categorías | `categorias_productos`, `productos`, `compra_productos` (congela el precio) |
+| 3 | Mapa de todo el cine | No implementado: el cliente no dio luz verde |
+| 4 | Admin y empleados | Rol en `usuarios`; guards `adminGuard` y `empleadoGuard`; funciones SQL que verifican el rol |
+| 4 | Validar entradas y candy con QR | RPC de validación y entrega; `estado` y `candy_entregado_en` se consumen por separado |
+| 4 | Asignación de sala sin superposiciones | Búsqueda de la primera sala libre con margen de 30 minutos (cliente) |
+| 5 | Restricción de edad 13 y 18 | Validación en `confirmar_compra`: bloquea a menores logueados; el anónimo acepta el aviso |
+| 5 | Butacas accesibles J y K | Filas J y K con precio y estilo propios en el mapa |
+| 5 | Butacas en tiempo real | Supabase Realtime sobre `butacas_reservadas` y `entradas` |
+| 6 | Interfaz simple | Navbar, rutas con `loadComponent`, estilo propio "cine clásico" |
+| 6 | Reporte de facturación | RPC de reportes del admin (`11-admin-reportes-log-cupones.sql`) |
+| 7 | Puntos, canjes y recompensas | `recompensas` y `canjes_puntos`; puntos = `floor(total − crédito aplicado)`; canje con código propio |
+| 7 | Combos | `combos` y `combo_productos`; fila virtual en `productos` con el mismo id; la butaca más barata queda en $0 |
+| 8 | Próximamente y alertas | `alertas_pelicula`; venta abierta desde 7 días antes con trigger `validar_venta_abierta` en `entradas` |
+| 8 | Preventa | `funciones.precio_preventa` y `fecha_fin_preventa`, resueltos en el servidor |
+| 8 | Mis películas | Consulta del usuario (RPC) con póster, fecha y calificación |
+| 9 | Cancelación hasta 2 horas antes | RPC con bloqueo `for update`; devuelve el total como crédito y resta los puntos |
+| 9 | Butacas VIP | Filas R, S, T con ×1,5 calculado en el servidor |
+| 9 | Exportar a PDF y Excel; gráficos | `jsPDF`; CSV con `;` y BOM; gráficos en HTML y CSS |
+| 9 | Registro de actividad | Tabla `log_actividad` alimentada por triggers y RPC |
+| TP | PWA con estilo propio | `@angular/service-worker`, `manifest.webmanifest`, tokens CSS propios |
 
 ## Arquitectura
 
@@ -196,3 +187,23 @@ La clave pública de Supabase viaja en el navegador, así que todo lo que proteg
 | Preventa | Por función | Aplicar a todas las funciones de una película |
 | Productos más vendidos | Un combo cuenta con su precio completo | Descomponer el combo |
 | Mapa del cine | No implementado, sin luz verde del cliente | — |
+
+## Despliegue y orden de los scripts SQL
+
+Para armar la base desde cero, ejecutar en el SQL Editor de Supabase, en este orden, los scripts de `supabase/`:
+
+| Orden | Archivo | Contenido |
+| --- | --- | --- |
+| 1 | `01-esquema.sql` | Tablas, restricciones, RLS y policies |
+| 2 | `02` a `07` | Compras, validación, candy bar, admin de productos, log de funciones, películas y reseñas |
+| 3 | `08-funciones-snapshot.sql` | Crédito, canjes, cancelación, consultas del usuario y triggers de log |
+| 4 | `11-admin-reportes-log-cupones.sql` | Reportes, log de actividad y cupones del admin |
+| 5 | `12-reservas-vencidas.sql` | Barrido de reservas de butacas |
+| 6 | `13-perfil-automatico.sql` | Trigger que crea el perfil al registrarse |
+| 7 | `14-proximamente-alertas.sql` | Venta abierta 7 días antes y alertas |
+| 8 | `15-combos.sql` | Combos con entrada incluida |
+| 9 | `16-seguridad.sql` | Permisos por columna y limpieza de policies |
+
+`00-exportar-esquema.sql` es solo una utilidad que exporta el esquema actual.
+
+El cliente necesita `src/environments/environment.ts` con `supabaseUrl` y `supabasePublishableKey`. Despliegue: `ng build` y `firebase deploy --only hosting`. `firebase.json` reescribe todas las rutas a `index.html` (SPA) y desactiva la caché de `ngsw.json` y `ngsw-worker.js` para que las versiones nuevas lleguen al usuario.

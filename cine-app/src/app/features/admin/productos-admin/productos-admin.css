@@ -108,3 +108,9 @@ button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
