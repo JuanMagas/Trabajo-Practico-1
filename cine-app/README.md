@@ -10,9 +10,9 @@ Web de un cine de un solo edificio: cartelera, compra de entradas con mapa de bu
 
 | Rol | Mail | Contraseña |
 | --- | --- | --- |
-| Admin | _completar_ | _completar_ |
-| Empleado | _completar_ | _completar_ |
-| Cliente | _completar_ | _completar_ |
+| Admin | admin@cine.com | 123456 |
+| Empleado | empleado@cine.com | 123456 |
+| Cliente | cliente1@cine.com | 123456 |
 
 ## Cómo correrlo
 
@@ -26,8 +26,8 @@ Hay que crear `src/environments/environment.ts` con las claves del proyecto de S
 
 ```ts
 export const environment = {
-  supabaseUrl: 'https://TU-PROYECTO.supabase.co',
-  supabasePublishableKey: 'TU_CLAVE_PUBLICA',
+  supabaseUrl: 'https://sdylkymsxmeastpgibrh.supabase.co',
+  supabasePublishableKey: 'sb_publishable_L-8vhwqFJ6Btx-xqSwCD6Q_wlLLI9Cj',
 };
 ```
 
